@@ -17,7 +17,7 @@
         "kubernetes",
         "sso",
         "slo",
-        "scim",
+        "scim"
     ],
     "python.linting.pylintEnabled": true,
     "todo-tree.tree.showCountsInTree": true,
