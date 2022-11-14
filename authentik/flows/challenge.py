@@ -125,6 +125,12 @@ class AccessDeniedChallenge(WithUserInfoChallenge):
     component = CharField(default="ak-stage-access-denied")
 
 
+class SessionEndChallenge(WithUserInfoChallenge):
+    """Challenge for ending a session"""
+
+    component = CharField(default="ak-stage-session-end")
+
+
 class PermissionDict(TypedDict):
     """Consent Permission"""
 
