@@ -177,6 +177,7 @@ class TestProviderOAuth2OAuth(SeleniumTestCase):
     )
     @apply_blueprint(
         "default/flow-default-provider-authorization-implicit-consent.yaml",
+        "default/flow-default-provider-invalidation.yaml",
     )
     @apply_blueprint(
         "system/providers-oauth2.yaml",
@@ -189,6 +190,7 @@ class TestProviderOAuth2OAuth(SeleniumTestCase):
         authorization_flow = Flow.objects.get(
             slug="default-provider-authorization-implicit-consent"
         )
+        invalidation_flow = Flow.objects.get(slug="default-provider-invalidation-flow")
         provider = OAuth2Provider.objects.create(
             name="grafana",
             client_type=ClientTypes.CONFIDENTIAL,
@@ -197,6 +199,7 @@ class TestProviderOAuth2OAuth(SeleniumTestCase):
             signing_key=create_test_cert(),
             redirect_uris="http://localhost:3000/login/generic_oauth",
             authorization_flow=authorization_flow,
+            invalidation_flow=invalidation_flow,
         )
         provider.property_mappings.set(
             ScopeMapping.objects.filter(
@@ -234,8 +237,8 @@ class TestProviderOAuth2OAuth(SeleniumTestCase):
         self.driver.get("http://localhost:3000/logout")
         self.wait_for_url(
             self.url(
-                "authentik_core:if-session-end",
-                application_slug=self.app_slug,
+                "authentik_core:if-flow",
+                flow_slug=invalidation_flow.slug,
             )
         )
         self.driver.find_element(By.ID, "logout").click()
