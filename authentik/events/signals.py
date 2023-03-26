@@ -6,6 +6,7 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.http import HttpRequest
 
+from authentik.admin.metrics import Timeseries, metrics
 from authentik.core.models import User
 from authentik.core.signals import login_failed, password_changed
 from authentik.events.models import Event, EventAction
@@ -34,7 +35,8 @@ def on_user_logged_in(sender, request: HttpRequest, user: User, **_):
             # Save the login method used
             kwargs[PLAN_CONTEXT_METHOD] = flow_plan.context[PLAN_CONTEXT_METHOD]
             kwargs[PLAN_CONTEXT_METHOD_ARGS] = flow_plan.context.get(PLAN_CONTEXT_METHOD_ARGS, {})
-    event = Event.new(EventAction.LOGIN, **kwargs).from_http(request, user=user)
+    with metrics.inc(Timeseries.users_login_count, str(user.pk)):
+        event = Event.new(EventAction.LOGIN, **kwargs).from_http(request, user=user)
     request.session[SESSION_LOGIN_EVENT] = event
 
 

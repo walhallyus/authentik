@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from model_utils.managers import InheritanceManager
 from rest_framework.serializers import BaseSerializer
 
+from authentik.admin.metrics import Timeseries, metrics
 from authentik.lib.models import (
     CreatedUpdatedModel,
     InheritanceAutoManager,
@@ -93,14 +94,18 @@ class PolicyBinding(SerializerModel):
 
     def passes(self, request: PolicyRequest) -> PolicyResult:
         """Check if request passes this PolicyBinding, check policy, group or user"""
-        if self.policy:
-            self.policy: Policy
-            return self.policy.passes(request)
-        if self.group:
-            return PolicyResult(self.group.is_member(request.user))
-        if self.user:
-            return PolicyResult(request.user == self.user)
-        return PolicyResult(False)
+        with metrics.inc(Timeseries.policies_execution_count, str(self.policy_binding_uuid)):
+            if self.policy:
+                self.policy: Policy
+                with metrics.observe(
+                    Timeseries.policies_execution_timing, str(self.policy.pk),
+                ):
+                    return self.policy.passes(request)
+            if self.group:
+                return PolicyResult(self.group.is_member(request.user))
+            if self.user:
+                return PolicyResult(request.user == self.user)
+            return PolicyResult(False)
 
     @property
     def serializer(self) -> type[BaseSerializer]:

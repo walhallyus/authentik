@@ -22,6 +22,7 @@ from sentry_sdk.api import set_tag
 from sentry_sdk.hub import Hub
 from structlog.stdlib import BoundLogger, get_logger
 
+from authentik.admin.metrics import Timeseries, metrics
 from authentik.core.models import Application
 from authentik.events.models import Event, EventAction, cleanse_dict
 from authentik.flows.challenge import (
@@ -291,7 +292,13 @@ class FlowExecutorView(APIView):
             with Hub.current.start_span(
                 op="authentik.flow.executor.stage",
                 description=class_to_path(self.current_stage_view.__class__),
-            ) as span:
+            ) as span, metrics.inc(
+                Timeseries.flows_stages_execution_count,
+                str(self.current_stage.pk),
+            ), metrics.observe(
+                Timeseries.flows_stages_execution_timing,
+                str(self.current_stage.pk),
+            ):
                 span.set_data("Method", "GET")
                 span.set_data("authentik Stage", self.current_stage_view)
                 span.set_data("authentik Flow", self.flow.slug)
@@ -335,7 +342,13 @@ class FlowExecutorView(APIView):
             with Hub.current.start_span(
                 op="authentik.flow.executor.stage",
                 description=class_to_path(self.current_stage_view.__class__),
-            ) as span:
+            ) as span, metrics.inc(
+                Timeseries.flows_stages_execution_count,
+                str(self.current_stage.pk),
+            ), metrics.observe(
+                Timeseries.flows_stages_execution_timing,
+                str(self.current_stage.pk),
+            ):
                 span.set_data("Method", "POST")
                 span.set_data("authentik Stage", self.current_stage_view)
                 span.set_data("authentik Flow", self.flow.slug)
@@ -441,6 +454,13 @@ class FlowExecutorView(APIView):
             # It's only deleted on a fresh executions
             # SESSION_KEY_HISTORY,
         ]
+        # Increase the flow execution as this function gets called on successful and
+        # failed flow executions
+        with metrics.inc(
+            Timeseries.flows_execution_count,
+            flow_pk=str(self.flow.pk),
+        ):
+            pass
         self._logger.debug("f(exec): cleaning up")
         for key in keys_to_delete:
             if key in self.request.session:

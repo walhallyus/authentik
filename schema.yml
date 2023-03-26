@@ -27786,6 +27786,7 @@ components:
       - can_geo_ip
       - can_impersonate
       - can_debug
+      - can_tsdb
       - is_enterprise
       type: string
       description: |-
@@ -27793,6 +27794,7 @@ components:
         * `can_geo_ip` - Can Geo Ip
         * `can_impersonate` - Can Impersonate
         * `can_debug` - Can Debug
+        * `can_tsdb` - Can Tsdb
         * `is_enterprise` - Is Enterprise
     CaptchaChallenge:
       type: object

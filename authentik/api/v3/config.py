@@ -16,7 +16,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from authentik.admin.metrics import metrics
 from authentik.core.api.utils import PassiveSerializer
 from authentik.events.geo import GEOIP_READER
 from authentik.lib.config import CONFIG
@@ -29,6 +29,7 @@ class Capabilities(models.TextChoices):
     CAN_GEO_IP = "can_geo_ip"
     CAN_IMPERSONATE = "can_impersonate"
     CAN_DEBUG = "can_debug"
+    CAN_TSDB = "can_tsdb"
     IS_ENTERPRISE = "is_enterprise"
 
 
@@ -71,6 +72,8 @@ class ConfigView(APIView):
             caps.append(Capabilities.CAN_IMPERSONATE)
         if settings.DEBUG:  # pragma: no cover
             caps.append(Capabilities.CAN_DEBUG)
+        if metrics.supported:
+            caps.append(Capabilities.CAN_TSDB)
         if "authentik.enterprise" in settings.INSTALLED_APPS:
             caps.append(Capabilities.IS_ENTERPRISE)
         return caps
