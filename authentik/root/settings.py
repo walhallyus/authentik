@@ -92,6 +92,7 @@ TENANT_APPS = [
     "authentik.sources.saml",
     "authentik.stages.authenticator",
     "authentik.stages.authenticator_duo",
+    "authentik.stages.authenticator_mobile",
     "authentik.stages.authenticator_sms",
     "authentik.stages.authenticator_static",
     "authentik.stages.authenticator_totp",
