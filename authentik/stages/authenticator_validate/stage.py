@@ -208,7 +208,7 @@ class AuthenticatorValidateStageView(ChallengeStageView):
             challenge = DeviceChallenge(
                 data={
                     "device_class": device_class,
-                    "device_uid": device.pk,
+                    "device_uid": str(device.pk),
                     "challenge": get_challenge_for_device(self.request, stage, device),
                 }
             )
