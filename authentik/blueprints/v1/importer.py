@@ -52,6 +52,7 @@ from authentik.policies.reputation.models import Reputation
 from authentik.providers.oauth2.models import AccessToken, AuthorizationCode, RefreshToken
 from authentik.providers.scim.models import SCIMGroup, SCIMUser
 from authentik.tenants.models import Tenant
+from authentik.stages.authenticator_mobile.models import MobileTransaction
 
 # Context set when the serializer is created in a blueprint context
 # Update website/developer-docs/blueprints/v1/models.md when used
@@ -95,6 +96,7 @@ def excluded_models() -> list[type[Model]]:
         AccessToken,
         RefreshToken,
         Reputation,
+        MobileTransaction,
     )
 
 
