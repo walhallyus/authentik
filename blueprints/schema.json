@@ -5291,12 +5291,15 @@
         "model_authentik_stages_authenticator_duo.duodevice": {
             "type": "object",
             "properties": {
+                "pk": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Pk"
+                },
                 "name": {
                     "type": "string",
-                    "maxLength": 64,
                     "minLength": 1,
-                    "title": "Name",
-                    "description": "The human-readable name of this device."
+                    "title": "Name"
                 }
             },
             "required": []
@@ -5426,20 +5429,13 @@
             "properties": {
                 "pk": {
                     "type": "string",
-                    "format": "uuid",
-                    "title": "Uuid"
+                    "minLength": 1,
+                    "title": "Pk"
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 64,
                     "minLength": 1,
-                    "title": "Name",
-                    "description": "The human-readable name of this device."
-                },
-                "state": {
-                    "type": "object",
-                    "additionalProperties": true,
-                    "title": "State"
+                    "title": "Name"
                 }
             },
             "required": []
@@ -5598,12 +5594,15 @@
         "model_authentik_stages_authenticator_sms.smsdevice": {
             "type": "object",
             "properties": {
+                "pk": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Pk"
+                },
                 "name": {
                     "type": "string",
-                    "maxLength": 64,
                     "minLength": 1,
-                    "title": "Name",
-                    "description": "The human-readable name of this device."
+                    "title": "Name"
                 }
             },
             "required": []
@@ -5729,12 +5728,15 @@
         "model_authentik_stages_authenticator_static.staticdevice": {
             "type": "object",
             "properties": {
+                "pk": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Pk"
+                },
                 "name": {
                     "type": "string",
-                    "maxLength": 64,
                     "minLength": 1,
-                    "title": "Name",
-                    "description": "The human-readable name of this device."
+                    "title": "Name"
                 }
             },
             "required": []
@@ -5856,12 +5858,15 @@
         "model_authentik_stages_authenticator_totp.totpdevice": {
             "type": "object",
             "properties": {
+                "pk": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Pk"
+                },
                 "name": {
                     "type": "string",
-                    "maxLength": 64,
                     "minLength": 1,
-                    "title": "Name",
-                    "description": "The human-readable name of this device."
+                    "title": "Name"
                 }
             },
             "required": []
@@ -6149,9 +6154,13 @@
         "model_authentik_stages_authenticator_webauthn.webauthndevice": {
             "type": "object",
             "properties": {
+                "pk": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Pk"
+                },
                 "name": {
                     "type": "string",
-                    "maxLength": 200,
                     "minLength": 1,
                     "title": "Name"
                 }
