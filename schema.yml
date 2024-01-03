@@ -2175,7 +2175,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MobileDeviceInfoRequest'
+              $ref: '#/components/schemas/MobileDeviceCheckInRequest'
         required: true
       security:
       - mobile_device_token: []
@@ -2297,44 +2297,6 @@ paths:
           description: Key successfully set
         '404':
           description: Transaction not found
-        '400':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationError'
-          description: ''
-        '403':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericError'
-          description: ''
-  /authenticators/mobile/{uuid}/set_notification_key/:
-    post:
-      operationId: authenticators_mobile_set_notification_key_create
-      description: Called by the phone whenever the firebase key changes and we need
-        to update it
-      parameters:
-      - in: path
-        name: uuid
-        schema:
-          type: string
-          format: uuid
-        description: A UUID string identifying this Mobile Device.
-        required: true
-      tags:
-      - authenticators
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MobileDeviceSetPushKeyRequest'
-        required: true
-      security:
-      - mobile_device_token: []
-      responses:
-        '204':
-          description: Key successfully set
         '400':
           content:
             application/json:
@@ -36142,6 +36104,17 @@ components:
       - type
       - verbose_name
       - verbose_name_plural
+    MobileDeviceCheckInRequest:
+      type: object
+      description: Check info into authentik
+      properties:
+        firebase_key:
+          type: string
+          minLength: 1
+        info:
+          $ref: '#/components/schemas/MobileDeviceInfoRequest'
+      required:
+      - info
     MobileDeviceEnrollmentCallback:
       type: object
       properties:
@@ -36163,7 +36136,6 @@ components:
           $ref: '#/components/schemas/MobileDeviceInfoRequest'
       required:
       - device_uid
-      - firebase_key
       - info
     MobileDeviceEnrollmentStatus:
       type: object
@@ -36254,15 +36226,6 @@ components:
       required:
       - selected_item
       - tx_id
-    MobileDeviceSetPushKeyRequest:
-      type: object
-      description: Set notification key
-      properties:
-        firebase_key:
-          type: string
-          minLength: 1
-      required:
-      - firebase_key
     ModelEnum:
       enum:
       - authentik_tenants.domain
