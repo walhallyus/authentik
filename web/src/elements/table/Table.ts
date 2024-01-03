@@ -157,6 +157,11 @@ export abstract class Table<T> extends AKElement implements TableLike {
     @property({ type: Boolean })
     expandable = false;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    rowExpandable(item: T): boolean {
+        return this.expandable;
+    }
+
     @property({ attribute: false })
     expandedElements: T[] = [];
 
@@ -392,7 +397,11 @@ export abstract class Table<T> extends AKElement implements TableLike {
                         : itemSelectHandler}
                 >
                     ${this.checkbox ? renderCheckbox() : html``}
-                    ${this.expandable ? renderExpansion() : html``}
+                    ${this.rowExpandable(item)
+                        ? renderExpansion()
+                        : this.expandable
+                          ? html`<td></td>`
+                          : html``}
                     ${this.row(item).map((col) => {
                         return html`<td role="cell">${col}</td>`;
                     })}
