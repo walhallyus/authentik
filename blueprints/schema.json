@@ -5259,7 +5259,6 @@
                         "string",
                         "null"
                     ],
-                    "minLength": 1,
                     "title": "Friendly name"
                 },
                 "client_id": {
@@ -5404,7 +5403,6 @@
                         "string",
                         "null"
                     ],
-                    "minLength": 1,
                     "title": "Friendly name"
                 },
                 "item_matching_mode": {
@@ -5540,7 +5538,6 @@
                         "string",
                         "null"
                     ],
-                    "minLength": 1,
                     "title": "Friendly name"
                 },
                 "provider": {
@@ -5707,7 +5704,6 @@
                         "string",
                         "null"
                     ],
-                    "minLength": 1,
                     "title": "Friendly name"
                 },
                 "token_count": {
@@ -5841,7 +5837,6 @@
                         "string",
                         "null"
                     ],
-                    "minLength": 1,
                     "title": "Friendly name"
                 },
                 "digits": {
@@ -6115,7 +6110,6 @@
                         "string",
                         "null"
                     ],
-                    "minLength": 1,
                     "title": "Friendly name"
                 },
                 "user_verification": {

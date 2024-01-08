@@ -30601,7 +30601,6 @@ components:
         friendly_name:
           type: string
           nullable: true
-          minLength: 1
         user_verification:
           $ref: '#/components/schemas/UserVerificationEnum'
         authenticator_attachment:
@@ -30912,7 +30911,6 @@ components:
         friendly_name:
           type: string
           nullable: true
-          minLength: 1
         client_id:
           type: string
           minLength: 1
@@ -31055,7 +31053,6 @@ components:
         friendly_name:
           type: string
           nullable: true
-          minLength: 1
         item_matching_mode:
           $ref: '#/components/schemas/ItemMatchingModeEnum'
         cgw_endpoint:
@@ -31198,7 +31195,6 @@ components:
         friendly_name:
           type: string
           nullable: true
-          minLength: 1
         provider:
           $ref: '#/components/schemas/ProviderEnum'
         from_number:
@@ -31343,7 +31339,6 @@ components:
         friendly_name:
           type: string
           nullable: true
-          minLength: 1
         token_count:
           type: integer
           maximum: 2147483647
@@ -31464,7 +31459,6 @@ components:
         friendly_name:
           type: string
           nullable: true
-          minLength: 1
         digits:
           $ref: '#/components/schemas/DigitsEnum'
       required:
@@ -38969,7 +38963,6 @@ components:
         friendly_name:
           type: string
           nullable: true
-          minLength: 1
         user_verification:
           $ref: '#/components/schemas/UserVerificationEnum'
         authenticator_attachment:
@@ -38998,7 +38991,6 @@ components:
         friendly_name:
           type: string
           nullable: true
-          minLength: 1
         client_id:
           type: string
           minLength: 1
@@ -39034,7 +39026,6 @@ components:
         friendly_name:
           type: string
           nullable: true
-          minLength: 1
         item_matching_mode:
           $ref: '#/components/schemas/ItemMatchingModeEnum'
         cgw_endpoint:
@@ -39060,7 +39051,6 @@ components:
         friendly_name:
           type: string
           nullable: true
-          minLength: 1
         provider:
           $ref: '#/components/schemas/ProviderEnum'
         from_number:
@@ -39106,7 +39096,6 @@ components:
         friendly_name:
           type: string
           nullable: true
-          minLength: 1
         token_count:
           type: integer
           maximum: 2147483647
@@ -39135,7 +39124,6 @@ components:
         friendly_name:
           type: string
           nullable: true
-          minLength: 1
         digits:
           $ref: '#/components/schemas/DigitsEnum'
     PatchedAuthenticatorValidateStageRequest:
