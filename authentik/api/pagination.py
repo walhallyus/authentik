@@ -1,6 +1,9 @@
 """Pagination which includes total pages and current page"""
 from rest_framework import pagination
 from rest_framework.response import Response
+from djangoql.serializers import DjangoQLSchemaSerializer
+
+from authentik.api.search import AUTOCOMPLETE_COMPONENT_NAME, QLSearch
 
 PAGINATION_COMPONENT_NAME = "Pagination"
 PAGINATION_SCHEMA = {
@@ -46,6 +49,19 @@ class Pagination(pagination.PageNumberPagination):
     page_query_param = "page"
     page_size_query_param = "page_size"
 
+    view = None
+
+    def paginate_queryset(self, queryset, request, view=None):
+        self.view = view
+        return super().paginate_queryset(queryset, request, view=view)
+
+    def get_autocomplete(self):
+        schema = QLSearch().get_schema(self.request, self.view)
+        introspections = DjangoQLSchemaSerializer().serialize(
+            schema(self.page.paginator.object_list.model),
+        )
+        return introspections
+
     def get_paginated_response(self, data):
         previous_page_number = 0
         if self.page.has_previous():
@@ -65,6 +81,7 @@ class Pagination(pagination.PageNumberPagination):
                     "end_index": self.page.end_index(),
                 },
                 "results": data,
+                "autocomplete": self.get_autocomplete(),
             }
         )
 
@@ -74,8 +91,9 @@ class Pagination(pagination.PageNumberPagination):
             "properties": {
                 "pagination": {"$ref": f"#/components/schemas/{PAGINATION_COMPONENT_NAME}"},
                 "results": schema,
+                "autocomplete": {"$ref": f"#/components/schemas/{AUTOCOMPLETE_COMPONENT_NAME}"},
             },
-            "required": ["pagination", "results"],
+            "required": ["pagination", "results", "autocomplete"],
         }
 
 
