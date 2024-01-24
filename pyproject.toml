@@ -121,6 +121,7 @@ authors = ["authentik Team <hello@goauthentik.io>"]
 
 [tool.poetry.dependencies]
 argon2-cffi = "*"
+authentik_cloud_gateway_client = {version = "0.4.0", allow-prereleases = true}
 celery = "*"
 channels = { version = "*", extras = ["daphne"] }
 channels-redis = "*"
@@ -184,7 +185,6 @@ webauthn = "*"
 wsproto = "*"
 xmlsec = "*"
 zxcvbn = "*"
-authentik_cloud_gateway_client = {version = "0.3.0", allow-prereleases = true}
 
 [tool.poetry.dev-dependencies]
 bandit = "*"
