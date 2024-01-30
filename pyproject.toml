@@ -117,6 +117,12 @@ version = "2023.10.7"
 description = ""
 authors = ["authentik Team <hello@goauthentik.io>"]
 
+# Needed for python-kadmin-epita
+[[tool.poetry.source]]
+name = "epita-cri"
+url = "https://gitlab.cri.epita.fr/api/v4/groups/3/-/packages/pypi/simple"
+priority = "explicit"
+
 [tool.poetry.dependencies]
 argon2-cffi = "*"
 celery = "*"
@@ -146,6 +152,7 @@ facebook-sdk = "*"
 flower = "*"
 geoip2 = "*"
 gunicorn = "*"
+gssapi = "*"
 kubernetes = "*"
 ldap3 = "*"
 lxml = [
@@ -164,6 +171,8 @@ pydantic = "*"
 pydantic-scim = "*"
 pyjwt = "*"
 python = "~3.12"
+# Fork of python-kadmin with compilation fixes as it's unmaintained
+python-kadmin-epita = { version = "*", source = "epita-cri" }
 pyyaml = "*"
 requests-oauthlib = "*"
 sentry-sdk = "*"

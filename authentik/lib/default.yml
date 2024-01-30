@@ -98,6 +98,9 @@ ldap:
   tls:
     ciphers: null
 
+kerberos:
+  task_timeout_hours: 2
+
 reputation:
   expiry: 86400
 
