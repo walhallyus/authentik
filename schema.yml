@@ -4201,6 +4201,7 @@ paths:
       tags:
       - core
       security:
+      - mobile_device_token: []
       - authentik: []
       - {}
       responses:
