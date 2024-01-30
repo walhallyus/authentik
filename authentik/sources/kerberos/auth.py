@@ -5,6 +5,7 @@ from structlog.stdlib import get_logger
 
 from authentik.core.auth import InbuiltBackend
 from authentik.core.models import User
+from authentik.lib.generators import generate_id
 from authentik.sources.kerberos.models import KerberosSource, UserKerberosSourceConnection
 
 LOGGER = get_logger()
@@ -96,9 +97,12 @@ class KerberosBackend(InbuiltBackend):
             user_source_connection.identifier.encode(), gssapi.raw.NameType.kerberos_principal
         )
         try:
-            # TODO: check that this doesn't use a particular ccache
+            # Use a temporary credentials cache to not interfere with whatever is defined elsewhere
+            gssapi.raw.ext_krb5.krb5_ccache_name(f"MEMORY:{generate_id(12)}")
             gssapi.raw.acquire_cred_with_password(name, password.encode())
+            # Restore the credentials cache to what it was before
+            gssapi.raw.ext_krb5.krb5_ccache_name(None)
             return True
         except gssapi.exceptions.GSSError as exc:
             LOGGER.warning("failed to kinit", exc=exc)
-            return False
+        return False
