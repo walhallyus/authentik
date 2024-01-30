@@ -99,7 +99,7 @@ class KerberosBackend(InbuiltBackend):
         try:
             # Use a temporary credentials cache to not interfere with whatever is defined elsewhere
             gssapi.raw.ext_krb5.krb5_ccache_name(f"MEMORY:{generate_id(12)}")
-            gssapi.raw.acquire_cred_with_password(name, password.encode())
+            gssapi.raw.ext_password.acquire_cred_with_password(name, password.encode())
             # Restore the credentials cache to what it was before
             gssapi.raw.ext_krb5.krb5_ccache_name(None)
             return True
