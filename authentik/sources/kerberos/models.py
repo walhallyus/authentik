@@ -28,6 +28,9 @@ class KerberosSource(Source):
     password_login_enabled = models.BooleanField(default=False)
 
     sync_users = models.BooleanField(default=True)
+    sync_guess_email = models.BooleanField(
+        default=False, help_text=_("Try to guess the email from the user principal and realm.")
+    )
     sync_users_password = models.BooleanField(
         default=True,
         help_text=_("When a user changes their password, sync it back to Kerberos"),
@@ -40,13 +43,19 @@ class KerberosSource(Source):
     )
     sync_keytab = models.TextField(
         help_text=_(
-            "Keytab to authenticate to kadmin for sync. Must be base64-encoded or in the form TYPE:residual"
+            (
+                "Keytab to authenticate to kadmin for sync. "
+                "Must be base64-encoded or in the form TYPE:residual"
+            )
         ),
         blank=True,
     )
     sync_ccache = models.TextField(
         help_text=_(
-            "Credentials cache to authenticate to kadmin for sync. Must be in the form TYPE:residual"
+            (
+                "Credentials cache to authenticate to kadmin for sync. "
+                "Must be in the form TYPE:residual"
+            )
         ),
         blank=True,
     )

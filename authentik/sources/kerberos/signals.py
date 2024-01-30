@@ -2,7 +2,6 @@
 import kadmin
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.translation import gettext_lazy as _
 from rest_framework.serializers import ValidationError
 from structlog.stdlib import get_logger
 
@@ -43,8 +42,7 @@ def kerberos_sync_password(sender, user: User, password: str, **_):
             Event.new(
                 EventAction.CONFIGURATION_ERROR,
                 message=(
-                    "Failed to change password in Kerberos source due to remote error: "
-                    f"{exc}"
+                    "Failed to change password in Kerberos source due to remote error: " f"{exc}"
                 ),
                 source=user_source_connection.source,
             ).set_user(user).save()
