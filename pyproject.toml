@@ -117,12 +117,6 @@ version = "2023.10.7"
 description = ""
 authors = ["authentik Team <hello@goauthentik.io>"]
 
-# Needed for python-kadmin-epita
-[[tool.poetry.source]]
-name = "epita-cri"
-url = "https://gitlab.cri.epita.fr/api/v4/groups/3/-/packages/pypi/simple"
-priority = "explicit"
-
 [tool.poetry.dependencies]
 argon2-cffi = "*"
 celery = "*"
@@ -172,7 +166,7 @@ pydantic-scim = "*"
 pyjwt = "*"
 python = "~3.12"
 # Fork of python-kadmin with compilation fixes as it's unmaintained
-python-kadmin-epita = { version = "*", source = "epita-cri" }
+python-kadmin = { git = "https://github.com/authentik-community/python-kadmin.git", tag = "v0.2.0" }
 pyyaml = "*"
 requests-oauthlib = "*"
 sentry-sdk = "*"

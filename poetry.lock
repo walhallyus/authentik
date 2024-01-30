@@ -3325,19 +3325,19 @@ files = [
 cli = ["click (>=5.0)"]
 
 [[package]]
-name = "python-kadmin-epita"
-version = "0.1.6"
+name = "python-kadmin"
+version = "0.2.0"
 description = "Python module for kerberos admin (kadm5)"
 optional = false
-python-versions = "^3.8"
-files = [
-    {file = "python_kadmin_epita-0.1.6.tar.gz", hash = "sha256:de489633889693f99085edaf92799973f1517c103ad2af4fd1d6b5634d8ec53b"},
-]
+python-versions = ">=3.8"
+files = []
+develop = false
 
 [package.source]
-type = "legacy"
-url = "https://gitlab.cri.epita.fr/api/v4/groups/3/-/packages/pypi/simple"
-reference = "epita-cri"
+type = "git"
+url = "https://github.com/authentik-community/python-kadmin.git"
+reference = "v0.2.0"
+resolved_reference = "6f9ce6ee2427e3488b403a900a9211166c7569e1"
 
 [[package]]
 name = "pytz"
@@ -4714,4 +4714,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.12"
-content-hash = "69d088c02b99176fe8f987b953cc2ad35a736391bf7d4b2a3a38e735ba1a9e4a"
+content-hash = "8d44fcd5f2dbd25c95d5f5a28989b87112a57144f8485e893aafcaa8dd7f0cc7"
