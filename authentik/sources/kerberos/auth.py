@@ -6,7 +6,11 @@ from structlog.stdlib import get_logger
 from authentik.core.auth import InbuiltBackend
 from authentik.core.models import User
 from authentik.lib.generators import generate_id
-from authentik.sources.kerberos.models import KerberosSource, UserKerberosSourceConnection
+from authentik.sources.kerberos.models import (
+    KerberosSource,
+    Krb5ConfContext,
+    UserKerberosSourceConnection,
+)
 
 LOGGER = get_logger()
 
@@ -89,16 +93,18 @@ class KerberosBackend(InbuiltBackend):
             principal=user_source_connection.identifier,
         )
 
-        name = gssapi.raw.import_name(
-            user_source_connection.identifier.encode(), gssapi.raw.NameType.kerberos_principal
-        )
-        try:
-            # Use a temporary credentials cache to not interfere with whatever is defined elsewhere
-            gssapi.raw.ext_krb5.krb5_ccache_name(f"MEMORY:{generate_id(12)}")
-            gssapi.raw.ext_password.acquire_cred_with_password(name, password.encode())
-            # Restore the credentials cache to what it was before
-            gssapi.raw.ext_krb5.krb5_ccache_name(None)
-            return True
-        except gssapi.exceptions.GSSError as exc:
-            LOGGER.warning("failed to kinit", exc=exc)
+        with Krb5ConfContext(user_source_connection.source):
+            name = gssapi.raw.import_name(
+                user_source_connection.identifier.encode(), gssapi.raw.NameType.kerberos_principal
+            )
+            try:
+                # Use a temporary credentials cache to not interfere with whatever is defined
+                # elsewhere
+                gssapi.raw.ext_krb5.krb5_ccache_name(f"MEMORY:{generate_id(12)}")
+                gssapi.raw.ext_password.acquire_cred_with_password(name, password.encode())
+                # Restore the credentials cache to what it was before
+                gssapi.raw.ext_krb5.krb5_ccache_name(None)
+                return True
+            except gssapi.exceptions.GSSError as exc:
+                LOGGER.warning("failed to kinit", exc=exc)
         return False

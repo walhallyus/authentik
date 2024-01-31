@@ -1,4 +1,5 @@
 """authentik Kerberos Source Models"""
+import os
 from pathlib import Path
 from tempfile import gettempdir
 from typing import Any
@@ -15,7 +16,6 @@ from authentik.core.models import Source, UserSourceConnection
 from authentik.lib.config import CONFIG
 
 
-# TODO: add krb5.conf option
 class KerberosSource(Source):
     """Federate Kerberos realm with authentik"""
 
@@ -25,6 +25,7 @@ class KerberosSource(Source):
     _kadmin_connections: dict[str, Any] = {}
 
     realm = models.TextField(help_text=_("Kerberos realm"), unique=True)
+    krb5_conf = models.TextField(help_text=_("Kerberos config"), blank=True)
 
     password_login_enabled = models.BooleanField(default=False)
 
@@ -71,6 +72,33 @@ class KerberosSource(Source):
 
         return KerberosSourceSerializer
 
+    def krb5_conf_path(self) -> str | None:
+        """Get krb5.conf path"""
+        if not self.krb5_conf:
+            return None
+        # TODO: extract that
+        conf_dir = Path(gettempdir()) / "authentik" / "sources" / "kerberos" / str(self.pk)
+        conf_dir.mkdir(parents=True, exist_ok=True)
+        conf_path = conf_dir / "krb5.conf"
+        conf_path.write_text(self.krb5_conf)
+        return str(conf_path)
+
+    def set_krb5_conf(self) -> str | None:
+        """Set the krb5.conf path in the process environment"""
+        path = self.krb5_conf_path()
+        if not path:
+            return None
+        previous = os.environ.get("KRB5_CONFIG", None)
+        os.environ["KRB5_CONFIG"] = path
+        return previous
+
+    def restore_krb5_conf(self, previous: str | None):
+        """Restore the krb5.conf path in the process environment"""
+        if previous:
+            os.environ["KRB5_CONFIG"] = previous
+        else:
+            del os.environ["KRB5_CONFIG"]
+
     def _kadmin_init(self) -> kadmin.KAdmin | None:
         # kadmin doesn't use a ccache for its connection
         # as such, we don't need to create a separate ccache for each source
@@ -86,11 +114,13 @@ class KerberosSource(Source):
         if self.sync_keytab:
             keytab = self.sync_keytab
             if ":" not in keytab:
+                # TODO: extract that
                 keytab_dir = (
                     Path(gettempdir()) / "authentik" / "sources" / "kerberos" / str(self.pk)
                 )
                 keytab_dir.mkdir(parents=True, exist_ok=True)
                 keytab_path = keytab_dir / "keytab"
+                # TODO: proper permissions
                 keytab_path.write_bytes(b64decode(self.keytab))
                 keytab = f"FILE:{keytab_path}"
             return kadmin.init_with_keytab(
@@ -133,20 +163,35 @@ class KerberosSource(Source):
         status = {"status": "ok"}
         if not self.sync_users:
             return status
-        try:
-            kadm = self.connection()
-            if kadm is None:
-                status["status"] = "no connection"
-                return status
-            status["principal_exists"] = kadm.principal_exists(self.sync_principal)
-        except kadmin.Error as exc:
-            status["status"] = str(exc)
-
+        with Krb5ConfContext(self):
+            try:
+                kadm = self.connection()
+                if kadm is None:
+                    status["status"] = "no connection"
+                    return status
+                status["principal_exists"] = kadm.principal_exists(self.sync_principal)
+            except kadmin.Error as exc:
+                status["status"] = str(exc)
         return status
 
     class Meta:
         verbose_name = _("Kerberos Source")
         verbose_name_plural = _("Kerberos Sources")
+
+
+class Krb5ConfContext:
+    """
+    Context manager to set the path to the krb5.conf config file.
+    """
+    def __init__(self, source: KerberosSource):
+        self._source = source
+        self._previous = None
+
+    def __enter__(self):
+        self._previous = self._source.set_krb5_conf()
+
+    def __exit__(self, *args, **kwargs):
+        self._source.restore_krb5_conf(self._previous)
 
 
 class UserKerberosSourceConnection(UserSourceConnection):

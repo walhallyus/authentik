@@ -8,7 +8,11 @@ from structlog.stdlib import get_logger
 from authentik.core.models import User
 from authentik.core.signals import password_changed
 from authentik.events.models import Event, EventAction
-from authentik.sources.kerberos.models import KerberosSource, UserKerberosSourceConnection
+from authentik.sources.kerberos.models import (
+    KerberosSource,
+    Krb5ConfContext,
+    UserKerberosSourceConnection,
+)
 from authentik.sources.kerberos.tasks import kerberos_connectivity_check, kerberos_sync_single
 
 LOGGER = get_logger()
@@ -33,17 +37,19 @@ def kerberos_sync_password(sender, user: User, password: str, **_):
         user=user, source__sync_users_password=True
     )
     for user_source_connection in user_source_connections:
-        try:
-            user_source_connection.source.connection().getprinc(
-                user_source_connection.identifier
-            ).change_password(password)
-        except kadmin.KAdminError as exc:
-            LOGGER.warning("failed to set Kerberos password", exc=exc)
-            Event.new(
-                EventAction.CONFIGURATION_ERROR,
-                message=(
-                    "Failed to change password in Kerberos source due to remote error: " f"{exc}"
-                ),
-                source=user_source_connection.source,
-            ).set_user(user).save()
-            raise ValidationError("Failed to set password") from exc
+        with Krb5ConfContext(user_source_connection.source):
+            try:
+                user_source_connection.source.connection().getprinc(
+                    user_source_connection.identifier
+                ).change_password(password)
+            except kadmin.KAdminError as exc:
+                LOGGER.warning("failed to set Kerberos password", exc=exc)
+                Event.new(
+                    EventAction.CONFIGURATION_ERROR,
+                    message=(
+                        "Failed to change password in Kerberos source due to remote error: "
+                        f"{exc}"
+                    ),
+                    source=user_source_connection.source,
+                ).set_user(user).save()
+                raise ValidationError("Failed to set password") from exc
