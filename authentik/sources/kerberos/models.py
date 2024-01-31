@@ -25,20 +25,40 @@ class KerberosSource(Source):
     _kadmin_connections: dict[str, Any] = {}
 
     realm = models.TextField(help_text=_("Kerberos realm"), unique=True)
-    krb5_conf = models.TextField(help_text=_("Kerberos config"), blank=True)
+    krb5_conf = models.TextField(
+        blank=True,
+        help_text=_("Custom krb5.conf to use. Uses the system one by default"),
+    )
 
-    password_login_enabled = models.BooleanField(default=False)
+    password_login_enabled = models.BooleanField(
+        default=False, help_text=_("Enable the passwword authentication backend"), db_index=True
+    )
+    password_login_update_internal_password = models.BooleanField(
+        default=True,
+        help_text=_(
+            (
+                "If enabled, the authentik-stored password will be updated upon "
+                "login with the Kerberos password backend"
+            )
+        ),
+    )
 
-    sync_users = models.BooleanField(default=True)
+    sync_users = models.BooleanField(
+        default=True, help_text=_("Sync users from Kerberos into authentik"), db_index=True
+    )
+    sync_service_principals = models.BooleanField(
+        default=False, help_text=_("Sync service principals in addition to users")
+    )
     sync_guess_email = models.BooleanField(
         default=False, help_text=_("Try to guess the email from the user principal and realm.")
     )
     sync_users_password = models.BooleanField(
         default=True,
         help_text=_("When a user changes their password, sync it back to Kerberos"),
+        db_index=True,
     )
     sync_principal = models.TextField(
-        help_text=_("Principal to authenticate to kadmin for sync"), blank=True
+        help_text=_("Principal to authenticate to kadmin for sync."), blank=True
     )
     sync_password = models.TextField(
         help_text=_("Password to authenticate to kadmin for sync"), blank=True
@@ -182,6 +202,7 @@ class Krb5ConfContext:
     """
     Context manager to set the path to the krb5.conf config file.
     """
+
     def __init__(self, source: KerberosSource):
         self._source = source
         self._previous = None
@@ -196,7 +217,7 @@ class Krb5ConfContext:
 class UserKerberosSourceConnection(UserSourceConnection):
     """Connection to configured Kerberos Sources."""
 
-    identifier = models.TextField()
+    identifier = models.TextField(db_index=True)
 
     @property
     def serializer(self) -> Serializer:

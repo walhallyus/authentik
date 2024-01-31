@@ -3,7 +3,7 @@ from django.core.exceptions import FieldError
 from django.db import IntegrityError, transaction
 from structlog.stdlib import get_logger
 
-from authentik.core.models import User
+from authentik.core.models import USER_PATH_SERVICE_ACCOUNT, User, UserTypes
 from authentik.events.models import Event, EventAction
 from authentik.sources.kerberos.models import (
     KerberosSource,
@@ -22,10 +22,11 @@ def kerberos_sync(source: KerberosSource):
     with Krb5ConfContext(source):
         for princ in source.connection().getprincs(f"*@{source.realm}"):
             principal, _ = princ.principal.rsplit("@", 1)
-            # TODO: add this as an option and treat them as service accounts
-            # Skipping service principals
+            is_service_account = False
             if "/" in principal:
-                continue
+                is_service_account = True
+                if not source.sync_service_principals:
+                    continue
 
             user_source_connection = UserKerberosSourceConnection.objects.filter(
                 source=source, identifier__iexact=principal
@@ -38,8 +39,22 @@ def kerberos_sync(source: KerberosSource):
             try:
                 with transaction.atomic():
                     # TODO: property mappings
-                    email = princ.principal if source.sync_guess_email else ""
-                    user = User.objects.create(username=principal, email=email)
+                    kwargs = {
+                        "username": principal,
+                        "email": princ.principal if source.sync_guess_email else "",
+                        "type": UserTypes.INTERNAL,
+                    }
+                    if is_service_account:
+                        kwargs.update(
+                            {
+                                "type": UserTypes.SERVICE_ACCOUNT,
+                                "path": USER_PATH_SERVICE_ACCOUNT,
+                            }
+                        )
+                    user = User.objects.create(**kwargs)
+                    if is_service_account:
+                        user.set_unusable_password()
+                        user.save()
                     user_source_connection = UserKerberosSourceConnection.objects.create(
                         source=source, user=user, identifier=princ.principal.lower()
                     )

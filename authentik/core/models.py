@@ -511,7 +511,7 @@ class Source(ManagedModel, SerializerModel, PolicyBindingModel):
 
     user_path_template = models.TextField(default="goauthentik.io/sources/%(slug)s")
 
-    enabled = models.BooleanField(default=True)
+    enabled = models.BooleanField(default=True, db_index=True)
     property_mappings = models.ManyToManyField("PropertyMapping", default=None, blank=True)
     icon = models.FileField(
         upload_to="source-icons/",

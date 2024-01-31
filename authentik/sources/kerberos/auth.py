@@ -47,7 +47,7 @@ class KerberosBackend(InbuiltBackend):
             # User not found, let's try to find it by identifier if the realm has been specified
             if realm is not None:
                 user_source_connections = UserKerberosSourceConnection.objects.filter(
-                    source__in=sources, identifier=f"{username}@{realm}".lower()
+                    source__in=sources, identifier__iexact=f"{username}@{realm}"
                 )
             # no realm specified, we can't do anything
             else:
@@ -68,9 +68,9 @@ class KerberosBackend(InbuiltBackend):
                     source=user_source_connection.source,
                     user=user_source_connection.user,
                 )
-                # TODO: add option to disable this
-                user_source_connection.user.set_password(password, signal=False)
-                user_source_connection.user.save()
+                if user_source_connection.source.password_login_update_internal_password:
+                    user_source_connection.user.set_password(password, signal=False)
+                    user_source_connection.user.save()
                 return user, user_source_connection.source
             # Password doesn't match, onto next source
             LOGGER.debug(
