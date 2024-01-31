@@ -17,6 +17,7 @@ def kerberos_sync(source: KerberosSource):
         return
     for princ in source.connection().getprincs(f"*@{source.realm}"):
         principal, _ = princ.principal.rsplit("@", 1)
+        # TODO: add this as an option and treat them as service accounts
         # Skipping service principals
         if "/" in principal:
             continue
@@ -31,6 +32,7 @@ def kerberos_sync(source: KerberosSource):
 
         try:
             with transaction.atomic():
+                # TODO: property mappings
                 email = princ.principal if source.sync_guess_email else ""
                 user = User.objects.create(username=principal, email=email)
                 user_source_connection = UserKerberosSourceConnection.objects.create(

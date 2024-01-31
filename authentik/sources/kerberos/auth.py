@@ -33,11 +33,6 @@ class KerberosBackend(InbuiltBackend):
         self, username: str, realm: str | None, password: str, **filters
     ) -> (User | None, KerberosSource | None):
         sources = KerberosSource.objects.filter(enabled=True, password_login_enabled=True)
-        if realm:
-            sources = sources.filter(realm=realm)
-
-        # TODO: check if we can make the following logic even more complicated :face_palm:
-
         # TODO: check that filter
         user = User.objects.filter(usersourceconnection_set=sources, **filters).first()
 
@@ -69,6 +64,7 @@ class KerberosBackend(InbuiltBackend):
                     source=user_source_connection.source,
                     user=user_source_connection.user,
                 )
+                # TODO: add option to disable this
                 user_source_connection.user.set_password(password, signal=False)
                 user_source_connection.user.save()
                 return user, user_source_connection.source

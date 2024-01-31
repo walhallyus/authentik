@@ -15,6 +15,7 @@ from authentik.core.models import Source, UserSourceConnection
 from authentik.lib.config import CONFIG
 
 
+# TODO: add krb5.conf option
 class KerberosSource(Source):
     """Federate Kerberos realm with authentik"""
 
