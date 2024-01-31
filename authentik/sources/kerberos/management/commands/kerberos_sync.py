@@ -1,4 +1,3 @@
-# TODO
 """Kerberos Sync"""
 from structlog.stdlib import get_logger
 

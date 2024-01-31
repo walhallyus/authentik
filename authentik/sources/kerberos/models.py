@@ -72,14 +72,18 @@ class KerberosSource(Source):
 
         return KerberosSourceSerializer
 
+    @property
+    def tempdir(self) -> Path:
+        """Get temporary storage for Kerberos files"""
+        path = Path(gettempdir()) / "authentik" / "sources" / "kerberos" / str(self.pk)
+        path.mkdir(mode=0o700, parents=True, exist_ok=True)
+        return path
+
     def krb5_conf_path(self) -> str | None:
         """Get krb5.conf path"""
         if not self.krb5_conf:
             return None
-        # TODO: extract that
-        conf_dir = Path(gettempdir()) / "authentik" / "sources" / "kerberos" / str(self.pk)
-        conf_dir.mkdir(parents=True, exist_ok=True)
-        conf_path = conf_dir / "krb5.conf"
+        conf_path = self.tempdir / "krb5.conf"
         conf_path.write_text(self.krb5_conf)
         return str(conf_path)
 
@@ -114,13 +118,8 @@ class KerberosSource(Source):
         if self.sync_keytab:
             keytab = self.sync_keytab
             if ":" not in keytab:
-                # TODO: extract that
-                keytab_dir = (
-                    Path(gettempdir()) / "authentik" / "sources" / "kerberos" / str(self.pk)
-                )
-                keytab_dir.mkdir(parents=True, exist_ok=True)
-                keytab_path = keytab_dir / "keytab"
-                # TODO: proper permissions
+                keytab_path = self.tempdir / "keytab"
+                keytab_path.touch(mode=0o600)
                 keytab_path.write_bytes(b64decode(self.keytab))
                 keytab = f"FILE:{keytab_path}"
             return kadmin.init_with_keytab(
