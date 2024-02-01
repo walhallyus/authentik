@@ -7,7 +7,7 @@ from authentik.events.models import SystemTask as DBSystemTask
 from authentik.lib.config import CONFIG
 from authentik.root.celery import CELERY_APP
 from authentik.sources.kerberos.models import KerberosSource
-from authentik.sources.kerberos.sync import KerberosSync, kerberos_sync
+from authentik.sources.kerberos.sync import KerberosSync
 
 LOGGER = get_logger()
 CACHE_KEY_STATUS = "goauthentik.io/sources/kerberos/status/"

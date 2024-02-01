@@ -11,9 +11,12 @@ from django.db.models.fields import b64decode
 from django.utils.translation import gettext_lazy as _
 from redis.lock import Lock
 from rest_framework.serializers import Serializer
+from structlog.stdlib import get_logger
 
 from authentik.core.models import PropertyMapping, Source, UserSourceConnection
 from authentik.lib.config import CONFIG
+
+LOGGER = get_logger()
 
 
 class KerberosSource(Source):
@@ -34,7 +37,7 @@ class KerberosSource(Source):
         default=False, help_text=_("Enable the passwword authentication backend"), db_index=True
     )
     password_login_update_internal_password = models.BooleanField(
-        default=True,
+        default=False,
         help_text=_(
             (
                 "If enabled, the authentik-stored password will be updated upon "
@@ -93,6 +96,7 @@ class KerberosSource(Source):
         path.mkdir(mode=0o700, parents=True, exist_ok=True)
         return path
 
+    @property
     def krb5_conf_path(self) -> str | None:
         """Get krb5.conf path"""
         if not self.krb5_conf:
@@ -101,23 +105,7 @@ class KerberosSource(Source):
         conf_path.write_text(self.krb5_conf)
         return str(conf_path)
 
-    def set_krb5_conf(self) -> str | None:
-        """Set the krb5.conf path in the process environment"""
-        path = self.krb5_conf_path()
-        if not path:
-            return None
-        previous = os.environ.get("KRB5_CONFIG", None)
-        os.environ["KRB5_CONFIG"] = path
-        return previous
-
-    def restore_krb5_conf(self, previous: str | None):
-        """Restore the krb5.conf path in the process environment"""
-        if previous:
-            os.environ["KRB5_CONFIG"] = previous
-        else:
-            del os.environ["KRB5_CONFIG"]
-
-    def _kadmin_init(self) -> kadmin.KAdmin | None:
+    def _kadmin_init(self) -> "kadmin.KAdmin | None":
         # kadmin doesn't use a ccache for its connection
         # as such, we don't need to create a separate ccache for each source
         if not self.sync_principal:
@@ -151,7 +139,7 @@ class KerberosSource(Source):
             )
         return None
 
-    def connection(self) -> kadmin.KAdmin | None:
+    def connection(self) -> "kadmin.KAdmin | None":
         """Get kadmin connection"""
         if str(self.pk) not in self._kadmin_connections:
             kadm = self._kadmin_init()
@@ -199,13 +187,22 @@ class Krb5ConfContext:
 
     def __init__(self, source: KerberosSource):
         self._source = source
+        self._path = self._source.krb5_conf_path
         self._previous = None
 
     def __enter__(self):
-        self._previous = self._source.set_krb5_conf()
+        if not self._path:
+            return
+        self._previous = os.environ.get("KRB5_CONFIG", None)
+        os.environ["KRB5_CONFIG"] = self._path
 
     def __exit__(self, *args, **kwargs):
-        self._source.restore_krb5_conf(self._previous)
+        if not self._path:
+            return
+        if self._previous:
+            os.environ["KRB5_CONFIG"] = self._previous
+        else:
+            del os.environ["KRB5_CONFIG"]
 
 
 class UserKerberosSourceConnection(UserSourceConnection):

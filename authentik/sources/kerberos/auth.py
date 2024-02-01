@@ -22,7 +22,7 @@ class KerberosBackend(InbuiltBackend):
         """Try to authenticate a user via kerberos"""
         if "password" not in kwargs or "username" not in kwargs:
             return None
-        username = kwargs.get("username")
+        username = kwargs.pop("username")
         realm = None
         if "@" in username:
             username, realm = username.rsplit("@", 1)
@@ -37,16 +37,15 @@ class KerberosBackend(InbuiltBackend):
         self, username: str, realm: str | None, password: str, **filters
     ) -> (User | None, KerberosSource | None):
         sources = KerberosSource.objects.filter(enabled=True, password_login_enabled=True)
-        # TODO: check that filter
-        user = User.objects.filter(usersourceconnection_set=sources, **filters).first()
+        user = User.objects.filter(usersourceconnection__source__in=sources, **filters).first()
 
         if user is not None:
             # User found, let's get its connections for the sources that are available
-            user_source_connections = user.usersourceconnection_set.filter(source__in=sources)
+            user_source_connections = UserKerberosSourceConnection.objects.select_subclasses().filter(user=user, source__in=sources)
         else:
             # User not found, let's try to find it by identifier if the realm has been specified
             if realm is not None:
-                user_source_connections = UserKerberosSourceConnection.objects.filter(
+                user_source_connections = UserKerberosSourceConnection.objects.select_subclasses().filter(
                     source__in=sources, identifier__iexact=f"{username}@{realm}"
                 )
             # no realm specified, we can't do anything
@@ -57,7 +56,7 @@ class KerberosBackend(InbuiltBackend):
             LOGGER.debug("no kerberos source found for user", username=username)
             return None, None
 
-        for user_source_connection in user_source_connections:
+        for user_source_connection in user_source_connections.prefetch_related():
             # User either has an unusable password,
             # or has a password, but couldn't be authenticated by ModelBackend
             # This means we check with a kinit to see if the Kerberos password has changed
@@ -68,7 +67,7 @@ class KerberosBackend(InbuiltBackend):
                     source=user_source_connection.source,
                     user=user_source_connection.user,
                 )
-                if user_source_connection.source.password_login_update_internal_password:
+                if user_source_connection.source.kerberossource.password_login_update_internal_password:
                     user_source_connection.user.set_password(password, signal=False)
                     user_source_connection.user.save()
                 return user, user_source_connection.source
@@ -93,14 +92,14 @@ class KerberosBackend(InbuiltBackend):
             principal=user_source_connection.identifier,
         )
 
-        with Krb5ConfContext(user_source_connection.source):
+        with Krb5ConfContext(user_source_connection.source.kerberossource):
             name = gssapi.raw.import_name(
                 user_source_connection.identifier.encode(), gssapi.raw.NameType.kerberos_principal
             )
             try:
                 # Use a temporary credentials cache to not interfere with whatever is defined
                 # elsewhere
-                gssapi.raw.ext_krb5.krb5_ccache_name(f"MEMORY:{generate_id(12)}")
+                gssapi.raw.ext_krb5.krb5_ccache_name(f"MEMORY:{generate_id(12)}".encode())
                 gssapi.raw.ext_password.acquire_cred_with_password(name, password.encode())
                 # Restore the credentials cache to what it was before
                 gssapi.raw.ext_krb5.krb5_ccache_name(None)

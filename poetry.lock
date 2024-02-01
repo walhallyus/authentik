@@ -1927,6 +1927,20 @@ files = [
 referencing = ">=0.31.0"
 
 [[package]]
+name = "k5test"
+version = "0.10.3"
+description = "A library for testing Python applications in self-contained Kerberos 5 environments"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "k5test-0.10.3-py2.py3-none-any.whl", hash = "sha256:9584d28c71a861aea8e622bf57e166b9116903d45875f1b8883fa4bbdef737de"},
+    {file = "k5test-0.10.3.tar.gz", hash = "sha256:9c9deebcad63a315e81833d45e9fd12bf20166643b8abcb9ff6f4d6b184c571f"},
+]
+
+[package.extras]
+extension-test = ["gssapi"]
+
+[[package]]
 name = "kombu"
 version = "5.3.4"
 description = "Messaging library for Python."
@@ -4714,4 +4728,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.12"
-content-hash = "8d44fcd5f2dbd25c95d5f5a28989b87112a57144f8485e893aafcaa8dd7f0cc7"
+content-hash = "ecb0fdb0d18e870c3d35d8976d79d44fbbfd2d7b2c3b68874b743462b3bdd036"
