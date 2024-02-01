@@ -2,7 +2,7 @@
 from structlog.stdlib import get_logger
 
 from authentik.sources.kerberos.models import KerberosSource
-from authentik.sources.kerberos.sync import kerberos_sync
+from authentik.sources.kerberos.sync import KerberosSync
 from authentik.tenants.management import TenantCommand
 
 LOGGER = get_logger()
@@ -20,4 +20,4 @@ class Command(TenantCommand):
             if not source:
                 LOGGER.warning("Source does not exist", slug=source_slug)
                 continue
-            kerberos_sync(source)
+            KerberosSync(source).sync()

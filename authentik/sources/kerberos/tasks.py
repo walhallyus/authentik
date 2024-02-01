@@ -7,7 +7,7 @@ from authentik.events.models import SystemTask as DBSystemTask
 from authentik.lib.config import CONFIG
 from authentik.root.celery import CELERY_APP
 from authentik.sources.kerberos.models import KerberosSource
-from authentik.sources.kerberos.sync import kerberos_sync
+from authentik.sources.kerberos.sync import KerberosSync, kerberos_sync
 
 LOGGER = get_logger()
 CACHE_KEY_STATUS = "goauthentik.io/sources/kerberos/status/"
@@ -53,7 +53,7 @@ def kerberos_sync_single(source_pk: str):
         with lock:
             # Delete all sync tasks from the cache
             DBSystemTask.objects.filter(name="kerberos_sync", uid__startswith=source.slug).delete()
-            kerberos_sync(source)
+            KerberosSync(source).sync()
     except LockError:
         # This should never happen, we check if the lock is locked above so this
         # would only happen if there was some other timeout

@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from redis.lock import Lock
 from rest_framework.serializers import Serializer
 
-from authentik.core.models import Source, UserSourceConnection
+from authentik.core.models import PropertyMapping, Source, UserSourceConnection
 from authentik.lib.config import CONFIG
 
 
@@ -45,12 +45,6 @@ class KerberosSource(Source):
 
     sync_users = models.BooleanField(
         default=True, help_text=_("Sync users from Kerberos into authentik"), db_index=True
-    )
-    sync_service_principals = models.BooleanField(
-        default=False, help_text=_("Sync service principals in addition to users")
-    )
-    sync_guess_email = models.BooleanField(
-        default=False, help_text=_("Try to guess the email from the user principal and realm.")
     )
     sync_users_password = models.BooleanField(
         default=True,
@@ -230,3 +224,24 @@ class UserKerberosSourceConnection(UserSourceConnection):
     class Meta:
         verbose_name = _("User Kerberos Source Connection")
         verbose_name_plural = _("User Kerberos Source Connections")
+
+
+class KerberosPropertyMapping(PropertyMapping):
+    """Map Kerberos Property to User object attribute"""
+
+    @property
+    def component(self) -> str:
+        return "ak-property-mapping-kerberos-form"
+
+    @property
+    def serializer(self) -> type[Serializer]:
+        from authentik.source.kerberos.api.property_mapping import KerberosPropertyMappingSerializer
+
+        return KerberosPropertyMappingSerializer
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        verbose_name = _("Kerberos Property Mapping")
+        verbose_name_plural = _("Kerberos Property Mapping")
