@@ -1932,13 +1932,17 @@ version = "0.10.3"
 description = "A library for testing Python applications in self-contained Kerberos 5 environments"
 optional = false
 python-versions = ">=3.6"
-files = [
-    {file = "k5test-0.10.3-py2.py3-none-any.whl", hash = "sha256:9584d28c71a861aea8e622bf57e166b9116903d45875f1b8883fa4bbdef737de"},
-    {file = "k5test-0.10.3.tar.gz", hash = "sha256:9c9deebcad63a315e81833d45e9fd12bf20166643b8abcb9ff6f4d6b184c571f"},
-]
+files = []
+develop = false
 
 [package.extras]
 extension-test = ["gssapi"]
+
+[package.source]
+type = "git"
+url = "https://github.com/pythongssapi/k5test"
+reference = "main"
+resolved_reference = "aa9cf871e34a636f34e1207e733271580a9a3418"
 
 [[package]]
 name = "kombu"
@@ -4728,4 +4732,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.12"
-content-hash = "ecb0fdb0d18e870c3d35d8976d79d44fbbfd2d7b2c3b68874b743462b3bdd036"
+content-hash = "83021009e7fb67fdcd5547e7bc101ef85e6827a064dd72a76669dcb51fac2381"

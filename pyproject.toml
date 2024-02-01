@@ -196,7 +196,8 @@ debugpy = "*"
 drf-jsonschema-serializer = "*"
 freezegun = "*"
 importlib-metadata = "*"
-k5test = "*"
+# See https://github.com/pythongssapi/k5test/pull/27
+k5test = { git = "https://github.com/pythongssapi/k5test", branch = "main" }
 pdoc = "*"
 pylint = "*"
 pylint-django = "*"

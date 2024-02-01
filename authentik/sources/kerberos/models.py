@@ -114,8 +114,6 @@ class KerberosSource(Source):
             return kadmin.init_with_password(
                 self.sync_principal,
                 self.sync_password,
-                {},
-                self.realm,
             )
         if self.sync_keytab:
             keytab = self.sync_keytab
@@ -127,15 +125,11 @@ class KerberosSource(Source):
             return kadmin.init_with_keytab(
                 self.sync_principal,
                 keytab,
-                {},
-                self.realm,
             )
         if self.sync_ccache:
             return kadmin.init_with_ccache(
                 self.sync_principal,
                 self.sync_ccache,
-                {},
-                self.realm,
             )
         return None
 

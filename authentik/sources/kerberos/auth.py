@@ -41,12 +41,18 @@ class KerberosBackend(InbuiltBackend):
 
         if user is not None:
             # User found, let's get its connections for the sources that are available
-            user_source_connections = UserKerberosSourceConnection.objects.select_subclasses().filter(user=user, source__in=sources)
+            user_source_connections = (
+                UserKerberosSourceConnection.objects.select_subclasses().filter(
+                    user=user, source__in=sources
+                )
+            )
         else:
             # User not found, let's try to find it by identifier if the realm has been specified
             if realm is not None:
-                user_source_connections = UserKerberosSourceConnection.objects.select_subclasses().filter(
-                    source__in=sources, identifier__iexact=f"{username}@{realm}"
+                user_source_connections = (
+                    UserKerberosSourceConnection.objects.select_subclasses().filter(
+                        source__in=sources, identifier__iexact=f"{username}@{realm}"
+                    )
                 )
             # no realm specified, we can't do anything
             else:
@@ -67,7 +73,9 @@ class KerberosBackend(InbuiltBackend):
                     source=user_source_connection.source,
                     user=user_source_connection.user,
                 )
-                if user_source_connection.source.kerberossource.password_login_update_internal_password:
+                if (
+                    user_source_connection.source.kerberossource.password_login_update_internal_password
+                ):
                     user_source_connection.user.set_password(password, signal=False)
                     user_source_connection.user.save()
                 return user, user_source_connection.source

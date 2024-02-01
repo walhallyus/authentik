@@ -1,17 +1,18 @@
 """Kerberos Source test utils"""
 import os
 from copy import deepcopy
+from time import sleep
 
 from k5test import realm
 from rest_framework.test import APITestCase
 
 
-class KerberosTest(APITestCase):
-    """Kerberos Test Base"""
+class KerberosTestCase(APITestCase):
+    """Kerberos Test Case"""
 
     @classmethod
     def setUpClass(cls):
-        cls.realm = realm.K5Realm()
+        cls.realm = realm.K5Realm(start_kadmind=True)
 
         cls.realm.http_princ = f"HTTP/testserver@{cls.realm.realm}"
         cls.realm.http_keytab = os.path.join(cls.realm.tmpdir, "http_keytab")
@@ -21,6 +22,9 @@ class KerberosTest(APITestCase):
         cls._saved_env = deepcopy(os.environ)
         for k, v in cls.realm.env.items():
             os.environ[k] = v
+        # Wait for everything to start correctly
+        # Otherwise leads to flaky tests
+        sleep(5)
 
     @classmethod
     def tearDownClass(cls):

@@ -1,14 +1,12 @@
 """Kerberos Source Auth tests"""
 from authentik.core.models import User
-from authentik.lib.generators import generate_id, generate_key
+from authentik.lib.generators import generate_id
 from authentik.sources.kerberos.auth import KerberosBackend
 from authentik.sources.kerberos.models import KerberosSource, UserKerberosSourceConnection
-from authentik.sources.kerberos.tests.utils import KerberosTest
-
-LDAP_PASSWORD = generate_key()
+from authentik.sources.kerberos.tests.utils import KerberosTestCase
 
 
-class KerberosAuthTests(KerberosTest):
+class TestKerberosAuth(KerberosTestCase):
     """Kerberos Auth tests"""
 
     def setUp(self):
