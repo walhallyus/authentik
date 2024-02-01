@@ -15,9 +15,7 @@ class KerberosPropertyMappingSerializer(PropertyMappingSerializer):
 
     class Meta:
         model = KerberosPropertyMapping
-        fields = PropertyMappingSerializer.Meta.fields + [
-            "object_field",
-        ]
+        fields = PropertyMappingSerializer.Meta.fields
 
 
 class KerberosPropertyMappingFilter(FilterSet):

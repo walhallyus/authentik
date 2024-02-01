@@ -1122,6 +1122,117 @@
                         ],
                         "properties": {
                             "model": {
+                                "const": "authentik_sources_kerberos.kerberossource"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "state": {
+                                "type": "string",
+                                "enum": [
+                                    "absent",
+                                    "present",
+                                    "created",
+                                    "must_created"
+                                ],
+                                "default": "present"
+                            },
+                            "conditions": {
+                                "type": "array",
+                                "items": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "attrs": {
+                                "$ref": "#/$defs/model_authentik_sources_kerberos.kerberossource"
+                            },
+                            "identifiers": {
+                                "$ref": "#/$defs/model_authentik_sources_kerberos.kerberossource"
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "model",
+                            "identifiers"
+                        ],
+                        "properties": {
+                            "model": {
+                                "const": "authentik_sources_kerberos.userkerberossourceconnection"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "state": {
+                                "type": "string",
+                                "enum": [
+                                    "absent",
+                                    "present",
+                                    "created",
+                                    "must_created"
+                                ],
+                                "default": "present"
+                            },
+                            "conditions": {
+                                "type": "array",
+                                "items": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "attrs": {
+                                "$ref": "#/$defs/model_authentik_sources_kerberos.userkerberossourceconnection"
+                            },
+                            "identifiers": {
+                                "$ref": "#/$defs/model_authentik_sources_kerberos.userkerberossourceconnection"
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "model",
+                            "identifiers"
+                        ],
+                        "properties": {
+                            "model": {
+                                "const": "authentik_sources_kerberos.kerberospropertymapping"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "state": {
+                                "type": "string",
+                                "enum": [
+                                    "absent",
+                                    "present",
+                                    "created",
+                                    "must_created"
+                                ],
+                                "default": "present"
+                            },
+                            "conditions": {
+                                "type": "array",
+                                "items": {
+                                    "type": "boolean"
+                                }
+                            },
+                            "attrs": {
+                                "$ref": "#/$defs/model_authentik_sources_kerberos.kerberospropertymapping"
+                            },
+                            "identifiers": {
+                                "$ref": "#/$defs/model_authentik_sources_kerberos.kerberospropertymapping"
+                            }
+                        }
+                    },
+                    {
+                        "type": "object",
+                        "required": [
+                            "model",
+                            "identifiers"
+                        ],
+                        "properties": {
+                            "model": {
                                 "const": "authentik_sources_ldap.ldapsource"
                             },
                             "id": {
@@ -3471,6 +3582,7 @@
                         "authentik.providers.scim",
                         "authentik.rbac",
                         "authentik.recovery",
+                        "authentik.sources.kerberos",
                         "authentik.sources.ldap",
                         "authentik.sources.oauth",
                         "authentik.sources.plex",
@@ -3541,6 +3653,9 @@
                         "authentik_providers_scim.scimprovider",
                         "authentik_providers_scim.scimmapping",
                         "authentik_rbac.role",
+                        "authentik_sources_kerberos.kerberossource",
+                        "authentik_sources_kerberos.userkerberossourceconnection",
+                        "authentik_sources_kerberos.kerberospropertymapping",
                         "authentik_sources_ldap.ldapsource",
                         "authentik_sources_ldap.ldappropertymapping",
                         "authentik_sources_oauth.oauthsource",
@@ -4416,6 +4531,145 @@
                     "maxLength": 150,
                     "minLength": 1,
                     "title": "Name"
+                }
+            },
+            "required": []
+        },
+        "model_authentik_sources_kerberos.kerberossource": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Name",
+                    "description": "Source's display Name."
+                },
+                "slug": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1,
+                    "pattern": "^[-a-zA-Z0-9_]+$",
+                    "title": "Slug",
+                    "description": "Internal source name, used in URLs."
+                },
+                "enabled": {
+                    "type": "boolean",
+                    "title": "Enabled"
+                },
+                "authentication_flow": {
+                    "type": "integer",
+                    "title": "Authentication flow",
+                    "description": "Flow to use when authenticating existing users."
+                },
+                "enrollment_flow": {
+                    "type": "integer",
+                    "title": "Enrollment flow",
+                    "description": "Flow to use when enrolling new users."
+                },
+                "policy_engine_mode": {
+                    "type": "string",
+                    "enum": [
+                        "all",
+                        "any"
+                    ],
+                    "title": "Policy engine mode"
+                },
+                "user_matching_mode": {
+                    "type": "string",
+                    "enum": [
+                        "identifier",
+                        "email_link",
+                        "email_deny",
+                        "username_link",
+                        "username_deny"
+                    ],
+                    "title": "User matching mode",
+                    "description": "How the source determines if an existing user should be authenticated or a new user enrolled."
+                },
+                "user_path_template": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "User path template"
+                },
+                "icon": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Icon"
+                },
+                "sync_users": {
+                    "type": "boolean",
+                    "title": "Sync users",
+                    "description": "Sync users from Kerberos into authentik"
+                },
+                "sync_users_password": {
+                    "type": "boolean",
+                    "title": "Sync users password",
+                    "description": "When a user changes their password, sync it back to Kerberos"
+                },
+                "sync_principal": {
+                    "type": "string",
+                    "title": "Sync principal",
+                    "description": "Principal to authenticate to kadmin for sync."
+                },
+                "sync_password": {
+                    "type": "string",
+                    "title": "Sync password",
+                    "description": "Password to authenticate to kadmin for sync"
+                },
+                "sync_keytab": {
+                    "type": "string",
+                    "title": "Sync keytab",
+                    "description": "Keytab to authenticate to kadmin for sync. Must be base64-encoded or in the form TYPE:residual"
+                },
+                "sync_ccache": {
+                    "type": "string",
+                    "title": "Sync ccache",
+                    "description": "Credentials cache to authenticate to kadmin for sync. Must be in the form TYPE:residual"
+                }
+            },
+            "required": []
+        },
+        "model_authentik_sources_kerberos.userkerberossourceconnection": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "type": "integer",
+                    "title": "User"
+                },
+                "identifier": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Identifier"
+                },
+                "icon": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Icon"
+                }
+            },
+            "required": []
+        },
+        "model_authentik_sources_kerberos.kerberospropertymapping": {
+            "type": "object",
+            "properties": {
+                "managed": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "minLength": 1,
+                    "title": "Managed by authentik",
+                    "description": "Objects that are managed by authentik. These objects are created and updated automatically. This flag only indicates that an object can be overwritten by migrations. You can still modify the objects via the API, but expect changes to be overwritten in a later update."
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Name"
+                },
+                "expression": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Expression"
                 }
             },
             "required": []
@@ -7044,7 +7298,8 @@
                         "enum": [
                             "authentik.core.auth.InbuiltBackend",
                             "authentik.core.auth.TokenBackend",
-                            "authentik.sources.ldap.auth.LDAPBackend"
+                            "authentik.sources.ldap.auth.LDAPBackend",
+                            "authentik.sources.kerberos.auth.KerberosBackend"
                         ],
                         "title": "Backends"
                     },

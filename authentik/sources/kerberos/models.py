@@ -226,7 +226,9 @@ class KerberosPropertyMapping(PropertyMapping):
 
     @property
     def serializer(self) -> type[Serializer]:
-        from authentik.source.kerberos.api.property_mapping import KerberosPropertyMappingSerializer
+        from authentik.sources.kerberos.api.property_mapping import (
+            KerberosPropertyMappingSerializer,
+        )
 
         return KerberosPropertyMappingSerializer
 
