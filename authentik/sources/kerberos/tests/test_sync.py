@@ -17,6 +17,8 @@ class TestKerberosSync(KerberosTestCase):
             name="kerberos",
             slug="kerberos",
             realm=self.realm.realm,
+            sync_users=True,
+            sync_users_password=True,
             sync_principal=self.realm.admin_princ,
             sync_password=self.realm.password("admin"),
         )

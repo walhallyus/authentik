@@ -4,16 +4,22 @@ from pathlib import Path
 from tempfile import gettempdir
 from typing import Any
 
+import gssapi
 import kadmin
 from django.core.cache import cache
 from django.db import connection, models
 from django.db.models.fields import b64decode
+from django.http import HttpRequest
+from django.shortcuts import reverse
+from django.templatetags.static import static
 from django.utils.translation import gettext_lazy as _
 from redis.lock import Lock
 from rest_framework.serializers import Serializer
 from structlog.stdlib import get_logger
 
 from authentik.core.models import PropertyMapping, Source, UserSourceConnection
+from authentik.core.types import UILoginButton, UserSettingSerializer
+from authentik.flows.challenge import ChallengeTypes, RedirectChallenge
 from authentik.lib.config import CONFIG
 
 LOGGER = get_logger()
@@ -33,21 +39,8 @@ class KerberosSource(Source):
         help_text=_("Custom krb5.conf to use. Uses the system one by default"),
     )
 
-    password_login_enabled = models.BooleanField(
-        default=False, help_text=_("Enable the passwword authentication backend"), db_index=True
-    )
-    password_login_update_internal_password = models.BooleanField(
-        default=False,
-        help_text=_(
-            (
-                "If enabled, the authentik-stored password will be updated upon "
-                "login with the Kerberos password backend"
-            )
-        ),
-    )
-
     sync_users = models.BooleanField(
-        default=True, help_text=_("Sync users from Kerberos into authentik"), db_index=True
+        default=False, help_text=_("Sync users from Kerberos into authentik"), db_index=True
     )
     sync_users_password = models.BooleanField(
         default=True,
@@ -79,6 +72,40 @@ class KerberosSource(Source):
         blank=True,
     )
 
+    spnego_server_name = models.TextField(
+        help_text=_("Force the use of a specific server name for SPNEGO"),
+        blank=True,
+    )
+
+    spnego_keytab = models.TextField(
+        help_text=_("SPNEGO keytab base64-encoded or path to keytab in the form FILE:path"),
+        blank=True,
+    )
+    spnego_ccache = models.TextField(
+        help_text=_("Credential cache to use for SPNEGO in form type:residual"),
+        blank=True,
+    )
+
+    password_login_enabled = models.BooleanField(
+        default=False, help_text=_("Enable the passwword authentication backend"), db_index=True
+    )
+    password_login_update_internal_password = models.BooleanField(
+        default=False,
+        help_text=_(
+            (
+                "If enabled, the authentik-stored password will be updated upon "
+                "login with the Kerberos password backend"
+            )
+        ),
+    )
+
+    class Meta:
+        verbose_name = _("Kerberos Source")
+        verbose_name_plural = _("Kerberos Sources")
+
+    def __str__(self):
+        return f"Kerberos Source {self.name}"
+
     @property
     def component(self) -> str:
         return "ak-source-kerberos-form"
@@ -88,6 +115,37 @@ class KerberosSource(Source):
         from authentik.sources.kerberos.api.source import KerberosSourceSerializer
 
         return KerberosSourceSerializer
+
+    def ui_login_button(self, request: HttpRequest) -> UILoginButton:
+        return UILoginButton(
+            challenge=RedirectChallenge(
+                instance={
+                    "type": ChallengeTypes.REDIRECT.value,
+                    "to": reverse(
+                        "authentik_sources_kerberos:login",
+                        kwargs={"source_slug": self.slug},
+                    ),
+                }
+            ),
+            name=self.name,
+            icon_url=self.icon_url,
+        )
+
+    def ui_user_settings(self) -> UserSettingSerializer | None:
+        icon = self.icon_url
+        if not icon:
+            icon = static(f"authentik/sources/{self.slug}.svg")
+        return UserSettingSerializer(
+            data={
+                "title": self.name,
+                "component": "ak-user-settings-source-kerberos",
+                "configure_url": reverse(
+                    "authentik_sources_kerberos:login",
+                    kwargs={"source_slug": self.slug},
+                ),
+                "icon_url": icon,
+            }
+        )
 
     @property
     def tempdir(self) -> Path:
@@ -118,7 +176,7 @@ class KerberosSource(Source):
         if self.sync_keytab:
             keytab = self.sync_keytab
             if ":" not in keytab:
-                keytab_path = self.tempdir / "keytab"
+                keytab_path = self.tempdir / "kadmin_keytab"
                 keytab_path.touch(mode=0o600)
                 keytab_path.write_bytes(b64decode(self.keytab))
                 keytab = f"FILE:{keytab_path}"
@@ -169,9 +227,48 @@ class KerberosSource(Source):
                 status["status"] = str(exc)
         return status
 
-    class Meta:
-        verbose_name = _("Kerberos Source")
-        verbose_name_plural = _("Kerberos Sources")
+    def get_gssapi_store(self) -> dict[str, str]:
+        """Get GSSAPI credentials store for this source"""
+        ccache = self.spnego_ccache
+        keytab = None
+
+        if not ccache:
+            ccache_path = self.tempdir / "spnego_ccache"
+            ccache_path.touch(mode=0o600)
+            ccache = f"FILE:{ccache_path}"
+
+        if self.spnego_keytab:
+            # Keytab is of the form type:residual, use as-is
+            if ":" in self.spnego_keytab:
+                keytab = self.spnego_keytab
+            # Parse the keytab and write it in the file
+            else:
+                keytab_path = self.tempdir / "spnego_keytab"
+                keytab_path.touch(mode=0o600)
+                keytab_path.write_bytes(b64decode(self.spnego_keytab))
+                keytab = f"FILE:{keytab_path}"
+
+        store = {"ccache": ccache}
+        if keytab is not None:
+            store["keytab"] = keytab
+        return store
+
+    def get_gssapi_creds(self) -> gssapi.creds.Credentials | None:
+        """Get GSSAPI credentials for this source"""
+        try:
+            name = None
+            if self.spnego_server_name:
+                # pylint: disable=c-extension-no-member
+                name = gssapi.names.Name(
+                    base=self.spnego_server_name,
+                    name_type=gssapi.raw.types.NameType.hostbased_service,
+                )
+            return gssapi.creds.Credentials(
+                usage="accept", name=name, store=self.get_gssapi_store()
+            )
+        except gssapi.exceptions.GSSError as exc:
+            LOGGER.warn("GSSAPI credentials failure", exc=exc)
+            return None
 
 
 class Krb5ConfContext:

@@ -31,7 +31,7 @@ def sync_kerberos_source_on_save(sender, instance: KerberosSource, **_):
 def kerberos_sync_password(sender, user: User, password: str, **_):
     """Connect to kerberos and update password."""
     user_source_connections = UserKerberosSourceConnection.objects.filter(
-        user=user, source__sync_users_password=True
+        user=user, source__kerberossource__sync_users_password=True
     )
     for user_source_connection in user_source_connections:
         with Krb5ConfContext(user_source_connection.source):

@@ -30,6 +30,8 @@ class KerberosSourceSerializer(SourceSerializer):
     class Meta:
         model = KerberosSource
         fields = SourceSerializer.Meta.fields + [
+            "realm",
+            "krb5_conf",
             "sync_users",
             "sync_users_password",
             "sync_principal",
@@ -37,8 +39,17 @@ class KerberosSourceSerializer(SourceSerializer):
             "sync_keytab",
             "sync_ccache",
             "connectivity",
+            "spnego_server_name",
+            "spnego_keytab",
+            "spnego_ccache",
+            "password_login_enabled",
+            "password_login_update_internal_password",
         ]
-        extra_kwargs = {"bind_password": {"write_only": True}}
+        extra_kwargs = {
+            "sync_password": {"write_only": True},
+            "sync_keytab": {"write_only": True},
+            "spnego_keytab": {"write_only": True},
+        }
 
 
 class KerberosSyncStatusSerializer(PassiveSerializer):
@@ -58,11 +69,22 @@ class KerberosSourceViewSet(UsedByMixin, ModelViewSet):
         "name",
         "slug",
         "enabled",
+        "realm",
         "sync_users",
         "sync_users_password",
         "sync_principal",
+        "spnego_server_name",
+        "password_login_enabled",
+        "password_login_update_internal_password",
     ]
-    search_fields = ["name", "slug"]
+    search_fields = [
+        "name",
+        "slug",
+        "realm",
+        "krb5_conf",
+        "sync_principal",
+        "spnego_server_name",
+    ]
     ordering = ["name"]
 
     @extend_schema(

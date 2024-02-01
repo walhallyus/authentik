@@ -4596,6 +4596,17 @@
                     "minLength": 1,
                     "title": "Icon"
                 },
+                "realm": {
+                    "type": "string",
+                    "minLength": 1,
+                    "title": "Realm",
+                    "description": "Kerberos realm"
+                },
+                "krb5_conf": {
+                    "type": "string",
+                    "title": "Krb5 conf",
+                    "description": "Custom krb5.conf to use. Uses the system one by default"
+                },
                 "sync_users": {
                     "type": "boolean",
                     "title": "Sync users",
@@ -4625,6 +4636,31 @@
                     "type": "string",
                     "title": "Sync ccache",
                     "description": "Credentials cache to authenticate to kadmin for sync. Must be in the form TYPE:residual"
+                },
+                "spnego_server_name": {
+                    "type": "string",
+                    "title": "Spnego server name",
+                    "description": "Force the use of a specific server name for SPNEGO"
+                },
+                "spnego_keytab": {
+                    "type": "string",
+                    "title": "Spnego keytab",
+                    "description": "SPNEGO keytab base64-encoded or path to keytab in the form FILE:path"
+                },
+                "spnego_ccache": {
+                    "type": "string",
+                    "title": "Spnego ccache",
+                    "description": "Credential cache to use for SPNEGO in form type:residual"
+                },
+                "password_login_enabled": {
+                    "type": "boolean",
+                    "title": "Password login enabled",
+                    "description": "Enable the passwword authentication backend"
+                },
+                "password_login_update_internal_password": {
+                    "type": "boolean",
+                    "title": "Password login update internal password",
+                    "description": "If enabled, the authentik-stored password will be updated upon login with the Kerberos password backend"
                 }
             },
             "required": []

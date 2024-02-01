@@ -8,6 +8,7 @@ class AuthentikSourceKerberosConfig(ManagedAppConfig):
     name = "authentik.sources.kerberos"
     label = "authentik_sources_kerberos"
     verbose_name = "authentik Sources.Kerberos"
+    mountpoint = "source/kerberos/"
     default = True
 
     def reconcile_global_load_sources_kerberos_signals(self):
