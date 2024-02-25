@@ -19,8 +19,6 @@ from guardian.models import UserObjectPermission
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import BaseSerializer, Serializer
 from structlog.stdlib import BoundLogger, get_logger
-from structlog.testing import capture_logs
-from structlog.types import EventDict
 from yaml import load
 
 from authentik.blueprints.v1.common import (
@@ -42,6 +40,7 @@ from authentik.core.models import (
 from authentik.enterprise.license import LicenseKey
 from authentik.enterprise.models import LicenseUsage
 from authentik.enterprise.providers.rac.models import ConnectionToken
+from authentik.events.logs import LogEvent, capture_logs
 from authentik.events.models import SystemTask
 from authentik.events.utils import cleanse_dict
 from authentik.flows.models import FlowToken, Stage
@@ -376,7 +375,7 @@ class Importer:
                 self.logger.debug("entry to delete with no instance, skipping")
         return True
 
-    def validate(self, raise_validation_errors=False) -> tuple[bool, list[EventDict]]:
+    def validate(self, raise_validation_errors=False) -> tuple[bool, list[LogEvent]]:
         """Validate loaded blueprint export, ensure all models are allowed
         and serializers have no errors"""
         self.logger.debug("Starting blueprint import validation")
@@ -391,8 +390,6 @@ class Importer:
             successful = self._apply_models(raise_errors=raise_validation_errors)
             if not successful:
                 self.logger.debug("Blueprint validation failed")
-        for log in logs:
-            getattr(self.logger, log.get("log_level"))(**log)
         self.logger.debug("Finished blueprint import validation")
         self._import = orig_import
         return successful, logs

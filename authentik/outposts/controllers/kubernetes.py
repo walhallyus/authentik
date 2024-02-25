@@ -9,10 +9,10 @@ from kubernetes.client.exceptions import OpenApiException
 from kubernetes.config.config_exception import ConfigException
 from kubernetes.config.incluster_config import load_incluster_config
 from kubernetes.config.kube_config import load_kube_config_from_dict
-from structlog.testing import capture_logs
 from urllib3.exceptions import HTTPError
 from yaml import dump_all
 
+from authentik.events.logs import capture_logs
 from authentik.outposts.controllers.base import BaseClient, BaseController, ControllerException
 from authentik.outposts.controllers.k8s.base import KubernetesObjectReconciler
 from authentik.outposts.controllers.k8s.deployment import DeploymentReconciler

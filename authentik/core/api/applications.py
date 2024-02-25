@@ -20,13 +20,13 @@ from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import ModelViewSet
 from structlog.stdlib import get_logger
-from structlog.testing import capture_logs
 
 from authentik.admin.api.metrics import CoordinateSerializer
 from authentik.blueprints.v1.importer import SERIALIZER_CONTEXT_BLUEPRINT
 from authentik.core.api.providers import ProviderSerializer
 from authentik.core.api.used_by import UsedByMixin
 from authentik.core.models import Application, User
+from authentik.events.logs import capture_logs
 from authentik.events.models import EventAction
 from authentik.events.utils import sanitize_dict
 from authentik.lib.utils.file import (

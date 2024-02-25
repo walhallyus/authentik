@@ -30,6 +30,7 @@ from authentik.blueprints.v1.common import BlueprintLoader, BlueprintMetadata, E
 from authentik.blueprints.v1.importer import Importer
 from authentik.blueprints.v1.labels import LABEL_AUTHENTIK_INSTANTIATE
 from authentik.blueprints.v1.oci import OCI_PREFIX
+from authentik.events.logs import LogEvent
 from authentik.events.models import TaskStatus
 from authentik.events.system_tasks import SystemTask, prefill_task
 from authentik.events.utils import sanitize_dict
@@ -211,7 +212,7 @@ def apply_blueprint(self: SystemTask, instance_pk: str):
         if not valid:
             instance.status = BlueprintInstanceStatus.ERROR
             instance.save()
-            self.set_status(TaskStatus.ERROR, *[x["event"] for x in logs])
+            self.set_status(TaskStatus.ERROR, logs)
             return
         applied = importer.apply()
         if not applied:

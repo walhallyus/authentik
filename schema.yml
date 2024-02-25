@@ -35199,6 +35199,48 @@ components:
           type: string
       required:
       - link
+    LogEvent:
+      type: object
+      description: Single log message with all context logged.
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        log_level:
+          $ref: '#/components/schemas/LogLevelEnum'
+        logger:
+          type: string
+        event:
+          type: string
+        attributes:
+          type: object
+          additionalProperties: {}
+      required:
+      - attributes
+      - event
+      - log_level
+      - logger
+      - timestamp
+    LogLevelEnum:
+      enum:
+      - critical
+      - exception
+      - error
+      - warn
+      - warning
+      - info
+      - debug
+      - notset
+      type: string
+      description: |-
+        * `critical` - critical
+        * `exception` - exception
+        * `error` - error
+        * `warn` - warn
+        * `warning` - warning
+        * `info` - info
+        * `debug` - debug
+        * `notset` - notset
     LoginChallengeTypes:
       oneOf:
       - $ref: '#/components/schemas/RedirectChallenge'
@@ -40947,8 +40989,7 @@ components:
         log_messages:
           type: array
           items:
-            type: object
-            additionalProperties: {}
+            $ref: '#/components/schemas/LogEvent'
           readOnly: true
       required:
       - log_messages
@@ -43894,7 +43935,7 @@ components:
         messages:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/LogEvent'
       required:
       - description
       - duration

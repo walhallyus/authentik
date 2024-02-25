@@ -3,9 +3,9 @@
 from dataclasses import dataclass
 
 from structlog.stdlib import get_logger
-from structlog.testing import capture_logs
 
 from authentik import __version__, get_build_hash
+from authentik.events.logs import capture_logs
 from authentik.lib.config import CONFIG
 from authentik.lib.sentry import SentryIgnoredException
 from authentik.outposts.models import (
