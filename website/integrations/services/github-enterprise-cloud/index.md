@@ -1,6 +1,9 @@
 ---
-title: GitHub Enterprise Cloud
+title: Integrate with GitHub Enterprise Cloud
+sidebar_label: GitHub Enterprise Cloud
 ---
+
+# GitHub Enterprise Cloud
 
 <span class="badge badge--secondary">Support level: Community</span>
 
@@ -11,7 +14,7 @@ title: GitHub Enterprise Cloud
 > -- https://docs.github.com/en/enterprise-cloud@latest/admin/overview/about-github-for-enterprises
 
 :::note
-GitHub Enterprise Cloud EMU (Enterprise Managed Users) are not compatible with authentik. GitHub currently only permits SAML/OIDC for EMU organizations with Okta and/or Azure AD.
+GitHub Enterprise Cloud EMU (Enterprise Managed Users) are not compatible with authentik. GitHub currently only permits SAML/OIDC for EMU organizations with Okta and/or Microsoft Entra ID (Azure AD).
 :::
 
 ## Preparation

@@ -1,6 +1,6 @@
 import "@goauthentik/admin/providers/RelatedApplicationButton";
 import "@goauthentik/admin/providers/proxy/ProxyProviderForm";
-import "@goauthentik/app/elements/rbac/ObjectPermissionsPage";
+import "@goauthentik/admin/rbac/ObjectPermissionsPage";
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
 import { EVENT_REFRESH } from "@goauthentik/common/constants";
 import { convertToSlug } from "@goauthentik/common/utils";
@@ -411,5 +411,11 @@ export class ProxyProviderViewPage extends AKElement {
                     </div>
                 </div>
             </div>`;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-provider-proxy-view": ProxyProviderViewPage;
     }
 }

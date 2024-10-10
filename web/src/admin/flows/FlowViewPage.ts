@@ -1,9 +1,9 @@
 import "@goauthentik/admin/flows/BoundStagesList";
 import "@goauthentik/admin/flows/FlowDiagram";
 import "@goauthentik/admin/flows/FlowForm";
+import { DesignationToLabel } from "@goauthentik/admin/flows/utils";
 import "@goauthentik/admin/policies/BoundPoliciesList";
-import { DesignationToLabel } from "@goauthentik/app/admin/flows/utils";
-import "@goauthentik/app/elements/rbac/ObjectPermissionsPage";
+import "@goauthentik/admin/rbac/ObjectPermissionsPage";
 import { AndNext, DEFAULT_CONFIG } from "@goauthentik/common/api/config";
 import "@goauthentik/components/events/ObjectChangelog";
 import { AKElement } from "@goauthentik/elements/Base";
@@ -284,5 +284,11 @@ export class FlowViewPage extends AKElement {
                     objectPk=${this.flow.pk}
                 ></ak-rbac-object-permission-page>
             </ak-tabs>`;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-flow-view": FlowViewPage;
     }
 }

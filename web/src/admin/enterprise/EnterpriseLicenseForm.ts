@@ -1,5 +1,5 @@
-import { EVENT_REFRESH_ENTERPRISE } from "@goauthentik/app/common/constants";
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
+import { EVENT_REFRESH_ENTERPRISE } from "@goauthentik/common/constants";
 import "@goauthentik/elements/CodeMirror";
 import "@goauthentik/elements/forms/HorizontalFormElement";
 import { ModelForm } from "@goauthentik/elements/forms/ModelForm";
@@ -30,7 +30,7 @@ export class EnterpriseLicenseForm extends ModelForm<License, string> {
 
     async load(): Promise<void> {
         this.installID = (
-            await new EnterpriseApi(DEFAULT_CONFIG).enterpriseLicenseGetInstallIdRetrieve()
+            await new EnterpriseApi(DEFAULT_CONFIG).enterpriseLicenseInstallIdRetrieve()
         ).installId;
     }
 
@@ -59,5 +59,11 @@ export class EnterpriseLicenseForm extends ModelForm<License, string> {
             <ak-form-element-horizontal name="key" ?writeOnly=${this.instance !== undefined} label=${msg("License key")}>
                 <textarea class="pf-c-form-control"></textarea>
             </ak-form-element-horizontal>`;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-enterprise-license-form": EnterpriseLicenseForm;
     }
 }

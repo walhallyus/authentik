@@ -1,5 +1,5 @@
-import { DEFAULT_CONFIG } from "@goauthentik/app/common/api/config";
-import { AKChart } from "@goauthentik/app/elements/charts/Chart";
+import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
+import { AKChart } from "@goauthentik/elements/charts/Chart";
 import { ChartData } from "chart.js";
 
 import { msg } from "@lit/localize";
@@ -59,5 +59,11 @@ export class EventVolumeChart extends AKChart<Coordinate[]> {
             <div class="pf-c-card__title">${msg("Event volume")}</div>
             <div class="pf-c-card__body">${super.render()}</div>
         </div>`;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-events-volume-chart": EventVolumeChart;
     }
 }

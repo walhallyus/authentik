@@ -149,10 +149,8 @@ def outpost_controller(
         if not controller_type:
             return
         with controller_type(outpost, outpost.service_connection) as controller:
-            logs = getattr(controller, f"{action}_with_logs")()
             LOGGER.debug("---------------Outpost Controller logs starting----------------")
-            for log in logs:
-                LOGGER.debug(log)
+            logs = getattr(controller, f"{action}_with_logs")()
             LOGGER.debug("-----------------Outpost Controller logs end-------------------")
     except (ControllerException, ServiceConnectionInvalid) as exc:
         self.set_error(exc)
@@ -216,7 +214,7 @@ def outpost_post_save(model_class: str, model_pk: Any):
         if not hasattr(instance, field_name):
             continue
 
-        LOGGER.debug("triggering outpost update from from field", field=field.name)
+        LOGGER.debug("triggering outpost update from field", field=field.name)
         # Because the Outpost Model has an M2M to Provider,
         # we have to iterate over the entire QS
         for reverse in getattr(instance, field_name).all():

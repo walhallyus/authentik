@@ -1,4 +1,4 @@
-import { Interface } from "@goauthentik/app/elements/Interface";
+import { Interface } from "@goauthentik/elements/Interface";
 
 import { customElement, property } from "lit/decorators.js";
 
@@ -11,5 +11,11 @@ export class StoryInterface extends Interface {
 
     async getTheme(): Promise<UiThemeEnum> {
         return this.storyTheme;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-storybook-interface": StoryInterface;
     }
 }

@@ -10,8 +10,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from authentik import __version__, get_build_hash
-from authentik.admin.tasks import VERSION_CACHE_KEY, update_latest_version
+from authentik.admin.tasks import VERSION_CACHE_KEY, VERSION_NULL, update_latest_version
 from authentik.core.api.utils import PassiveSerializer
+from authentik.outposts.models import Outpost
 
 
 class VersionSerializer(PassiveSerializer):
@@ -19,8 +20,10 @@ class VersionSerializer(PassiveSerializer):
 
     version_current = SerializerMethodField()
     version_latest = SerializerMethodField()
+    version_latest_valid = SerializerMethodField()
     build_hash = SerializerMethodField()
     outdated = SerializerMethodField()
+    outpost_outdated = SerializerMethodField()
 
     def get_build_hash(self, _) -> str:
         """Get build hash, if version is not latest or released"""
@@ -38,9 +41,22 @@ class VersionSerializer(PassiveSerializer):
             return __version__
         return version_in_cache
 
+    def get_version_latest_valid(self, _) -> bool:
+        """Check if latest version is valid"""
+        return cache.get(VERSION_CACHE_KEY) != VERSION_NULL
+
     def get_outdated(self, instance) -> bool:
         """Check if we're running the latest version"""
         return parse(self.get_version_current(instance)) < parse(self.get_version_latest(instance))
+
+    def get_outpost_outdated(self, _) -> bool:
+        """Check if any outpost is outdated/has a version mismatch"""
+        any_outdated = False
+        for outpost in Outpost.objects.all():
+            for state in outpost.state:
+                if state.version_outdated:
+                    any_outdated = True
+        return any_outdated
 
 
 class VersionView(APIView):

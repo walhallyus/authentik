@@ -1,10 +1,10 @@
 import "@goauthentik/admin/providers/RelatedApplicationButton";
 import "@goauthentik/admin/providers/saml/SAMLProviderForm";
-import renderDescriptionList from "@goauthentik/app/components/DescriptionList";
-import "@goauthentik/app/elements/rbac/ObjectPermissionsPage";
+import "@goauthentik/admin/rbac/ObjectPermissionsPage";
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
 import { EVENT_REFRESH } from "@goauthentik/common/constants";
 import { MessageLevel } from "@goauthentik/common/messages";
+import renderDescriptionList from "@goauthentik/components/DescriptionList";
 import "@goauthentik/components/events/ObjectChangelog";
 import { AKElement } from "@goauthentik/elements/Base";
 import "@goauthentik/elements/CodeMirror";
@@ -512,7 +512,7 @@ export class SAMLProviderViewPage extends AKElement {
                 <div class="pf-c-card__body">
                     ${renderDescriptionList([
                         [
-                            "Preview for user",
+                            msg("Preview for user"),
                             html`
                                 <ak-search-select
                                     .fetchObjects=${async (query?: string): Promise<User[]> => {
@@ -575,7 +575,11 @@ export class SAMLProviderViewPage extends AKElement {
                                 </dt>
                                 <dd class="pf-c-description-list__description">
                                     <div class="pf-c-description-list__text">
-                                        <ul class="pf-c-list"></ul>
+                                        <ul class="pf-c-list">
+                                            ${attr.Value.map((value) => {
+                                                return html` <li><pre>${value}</pre></li> `;
+                                            })}
+                                        </ul>
                                     </div>
                                 </dd>
                             </div>`;
@@ -584,5 +588,11 @@ export class SAMLProviderViewPage extends AKElement {
                 </div>
             </div>
         </div>`;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-provider-saml-view": SAMLProviderViewPage;
     }
 }

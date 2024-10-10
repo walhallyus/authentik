@@ -3,16 +3,16 @@
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework import mixins
 from rest_framework.filters import OrderingFilter, SearchFilter
-from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import GenericViewSet
 
-from authentik.api.authorization import OwnerFilter, OwnerPermissions
+from authentik.api.authorization import OwnerFilter, OwnerSuperuserPermissions
 from authentik.core.api.groups import GroupMemberSerializer
 from authentik.core.api.used_by import UsedByMixin
+from authentik.core.api.utils import ModelSerializer
 from authentik.enterprise.api import EnterpriseRequiredMixin
 from authentik.enterprise.providers.rac.api.endpoints import EndpointSerializer
 from authentik.enterprise.providers.rac.api.providers import RACProviderSerializer
-from authentik.enterprise.providers.rac.models import ConnectionToken, Endpoint
+from authentik.enterprise.providers.rac.models import ConnectionToken
 
 
 class ConnectionTokenSerializer(EnterpriseRequiredMixin, ModelSerializer):
@@ -23,7 +23,7 @@ class ConnectionTokenSerializer(EnterpriseRequiredMixin, ModelSerializer):
     user = GroupMemberSerializer(source="session.user", read_only=True)
 
     class Meta:
-        model = Endpoint
+        model = ConnectionToken
         fields = [
             "pk",
             "provider",
@@ -32,6 +32,12 @@ class ConnectionTokenSerializer(EnterpriseRequiredMixin, ModelSerializer):
             "endpoint_obj",
             "user",
         ]
+
+
+class ConnectionTokenOwnerFilter(OwnerFilter):
+    """Owner filter for connection tokens (checks session's user)"""
+
+    owner_key = "session__user"
 
 
 class ConnectionTokenViewSet(
@@ -49,5 +55,10 @@ class ConnectionTokenViewSet(
     filterset_fields = ["endpoint", "session__user", "provider"]
     search_fields = ["endpoint__name", "provider__name"]
     ordering = ["endpoint__name", "provider__name"]
-    permission_classes = [OwnerPermissions]
-    filter_backends = [OwnerFilter, DjangoFilterBackend, OrderingFilter, SearchFilter]
+    permission_classes = [OwnerSuperuserPermissions]
+    filter_backends = [
+        ConnectionTokenOwnerFilter,
+        DjangoFilterBackend,
+        OrderingFilter,
+        SearchFilter,
+    ]

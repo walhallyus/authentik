@@ -1,4 +1,4 @@
-import { AKElement } from "@goauthentik/app/elements/Base";
+import { AKElement } from "@goauthentik/elements/Base";
 import "@patternfly/elements/pf-tooltip/pf-tooltip.js";
 
 import { msg } from "@lit/localize";
@@ -46,5 +46,11 @@ export class LDAPSourceConnectivity extends AKElement {
                 return html`<li>${tooltip}</li>`;
             })}
         </ul>`;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-source-ldap-connectivity": LDAPSourceConnectivity;
     }
 }

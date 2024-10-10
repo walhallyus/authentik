@@ -1,4 +1,4 @@
-import { TITLE_DEFAULT } from "@goauthentik/app/common/constants";
+import { TITLE_DEFAULT } from "@goauthentik/common/constants";
 import { Interface } from "@goauthentik/elements/Interface";
 import "@goauthentik/elements/LoadingOverlay";
 import Guacamole from "guacamole-common-js";
@@ -326,5 +326,11 @@ export class RacInterface extends Interface {
                 : html``}
             <div class="container">${this.container}</div>
         `;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-rac": RacInterface;
     }
 }

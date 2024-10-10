@@ -1,6 +1,9 @@
 ---
-title: PowerDNS-Admin
+title: Integrate with PowerDNS-Admin
+sidebar_label: PowerDNS-Admin
 ---
+
+# PowerDNS-Admin
 
 <span class="badge badge--secondary">Support level: Community</span>
 
@@ -60,7 +63,6 @@ You must mount the certificate selected in authentik as a file in the Docker con
 ### docker-compose
 
 ```yaml
-version: "3.3"
 services:
     powerdns-admin:
         image: powerdnsadmin/pda-legacy:latest

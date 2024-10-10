@@ -1,6 +1,10 @@
-For Nginx Proxy Manager you can use this snippet
-
 ```
+# Upgrade WebSocket if requested, otherwise use keepalive
+map $http_upgrade $connection_upgrade_keepalive {
+    default upgrade;
+    ''      '';
+}
+
 # Increase buffer size for large headers
 # This is needed only if you get 'upstream sent too big header while reading response
 # header from upstream' error when trying to access an application protected by goauthentik
@@ -16,6 +20,9 @@ location / {
     # Set any other headers your application might need
     # proxy_set_header Host $host;
     # proxy_set_header ...
+    # Support for websocket
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade_keepalive;
 
     ##############################
     # authentik-specific config
@@ -37,14 +44,23 @@ location / {
     proxy_set_header X-authentik-email $authentik_email;
     proxy_set_header X-authentik-name $authentik_name;
     proxy_set_header X-authentik-uid $authentik_uid;
+
+    # This section should be uncommented when the "Send HTTP Basic authentication" option
+    # is enabled in the proxy provider
+    # auth_request_set $authentik_auth $upstream_http_authorization;
+    # proxy_set_header Authorization $authentik_auth;
 }
 
 # all requests to /outpost.goauthentik.io must be accessible without authentication
 location /outpost.goauthentik.io {
-    proxy_pass              http://outpost.company:9000/outpost.goauthentik.io;
-    # ensure the host of this vserver matches your external URL you've configured
-    # in authentik
+    # When using the embedded outpost, use:
+    proxy_pass              http://authentik.company:9000/outpost.goauthentik.io;
+    # For manual outpost deployments:
+    # proxy_pass              http://outpost.company:9000;
+
+    # Note: ensure the Host header matches your external authentik URL:
     proxy_set_header        Host $host;
+
     proxy_set_header        X-Original-URL $scheme://$http_host$request_uri;
     add_header              Set-Cookie $auth_cookie;
     auth_request_set        $auth_cookie $upstream_http_set_cookie;

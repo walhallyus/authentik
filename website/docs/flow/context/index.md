@@ -60,6 +60,10 @@ When an unauthenticated user attempts to access a secured resource, they are red
 
 When a user authenticates/enrolls via an external source, this will be set to the source they are using.
 
+#### `outpost` (dictionary) <span class="badge badge--version">authentik 2024.10+</span>
+
+When a flow is executed by an Outpost (for example the [LDAP](../../providers/ldap/index.md) or [RADIUS](../../providers/radius/index.mdx)), this will be set to a dictionary containing the Outpost instance under the key `"instance"`.
+
 ### Scenario-specific keys
 
 #### `is_sso` (boolean)
@@ -71,16 +75,6 @@ Set to `True` when the flow is executed from an "SSO" context. For example, this
 Set when a flow execution is continued from a token. This happens for example when an [Email stage](../stages/email/index.mdx) is used and the user clicks on the link within the email. The token object contains the key that was used to restore the flow execution.
 
 ### Stage-specific keys
-
-#### Consent stage
-
-##### `consent_header` (string)
-
-The title of the consent prompt shown. Set automatically when the consent stage is used with a OAuth2, Proxy or SAML provider.
-
-##### `consent_permissions` (List of PermissionDict)
-
-An optional list of all permissions that will be given to the application by granting consent. Not supported with SAML. When used with an OAuth2 or Proxy provider, this will be set based on the configured scopes.
 
 #### Autosubmit stage
 
@@ -98,13 +92,27 @@ URL that the form will be submitted to.
 
 Key-value pairs of the data that is included in the form and will be submitted to `url`.
 
+#### Captcha stage <span class="badge badge--version">authentik 2024.6+</span>
+
+##### `captcha` (dictionary)
+
+When `error_on_invalid_score` (TODO) is set to false on a captcha stage, after the execution of the captcha stage, this object will be set in the flow context.
+
+It contains two keys, `response` which is the raw response from the specified captcha verification URL, and `stage`, which is a reference to the captcha stage that executed the test.
+
+#### Consent stage
+
+##### `consent_header` (string)
+
+The title of the consent prompt shown. Set automatically when the consent stage is used with a OAuth2, Proxy or SAML provider.
+
+##### `consent_permissions` (List of PermissionDict)
+
+An optional list of all permissions that will be given to the application by granting consent. Not supported with SAML. When used with an OAuth2 or Proxy provider, this will be set based on the configured scopes.
+
 #### Deny stage
 
-##### `deny_message` (string)
-
-:::info
-Requires authentik 2023.10
-:::
+##### `deny_message` (string) <span class="badge badge--version">authentik 2023.10+</span>
 
 Optionally overwrite the deny message shown, has a higher priority than the message configured in the stage.
 
@@ -120,11 +128,7 @@ If set, this must be a list of group objects and not group names.
 
 Path the `pending_user` will be written to. If not set in the flow, falls back to the value set in the user_write stage, and otherwise to the `users` path.
 
-##### `user_type` (string)
-
-:::info
-Requires authentik 2023.10
-:::
+##### `user_type` (string) <span class="badge badge--version">authentik 2023.10+</span>
 
 Type the `pending_user` will be created as. Must be one of `internal`, `external` or `service_account`.
 

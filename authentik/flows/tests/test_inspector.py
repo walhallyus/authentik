@@ -7,7 +7,6 @@ from django.urls.base import reverse
 from rest_framework.test import APITestCase
 
 from authentik.core.tests.utils import create_test_admin_user, create_test_flow
-from authentik.flows.challenge import ChallengeTypes
 from authentik.flows.models import FlowDesignation, FlowStageBinding, InvalidResponseAction
 from authentik.stages.dummy.models import DummyStage
 from authentik.stages.identification.models import IdentificationStage, UserFields
@@ -46,6 +45,7 @@ class TestFlowInspector(APITestCase):
         self.assertJSONEqual(
             res.content,
             {
+                "allow_show_password": False,
                 "component": "ak-stage-identification",
                 "flow_info": {
                     "background": flow.background_url,
@@ -53,7 +53,7 @@ class TestFlowInspector(APITestCase):
                     "title": flow.title,
                     "layout": "stacked",
                 },
-                "type": ChallengeTypes.NATIVE.value,
+                "flow_designation": "authentication",
                 "password_fields": False,
                 "primary_action": "Log in",
                 "sources": [],

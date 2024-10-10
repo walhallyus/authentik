@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-05 00:07+0000\n"
+"POT-Creation-Date: 2024-09-25 00:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: authentik/admin/tasks.py
+#, python-brace-format
+msgid "New version {version} available!"
+msgstr ""
 
 #: authentik/api/schema.py
 msgid "Generic API Error"
@@ -76,6 +81,12 @@ msgid ""
 msgstr ""
 
 #: authentik/brands/models.py
+msgid ""
+"When set, external users will be redirected to this application after "
+"authenticating."
+msgstr ""
+
+#: authentik/brands/models.py
 msgid "Web Certificate used by the authentik Core webserver."
 msgstr ""
 
@@ -88,11 +99,9 @@ msgid "Brands"
 msgstr ""
 
 #: authentik/core/api/providers.py
-msgid "SAML Provider from Metadata"
-msgstr ""
-
-#: authentik/core/api/providers.py
-msgid "Create a SAML Provider by importing its Metadata."
+msgid ""
+"When not set all providers are returned. When set to true, only backchannel "
+"providers are returned. When set to false, backchannel providers are excluded"
 msgstr ""
 
 #: authentik/core/api/users.py
@@ -117,6 +126,14 @@ msgstr ""
 
 #: authentik/core/models.py
 msgid "Groups"
+msgstr ""
+
+#: authentik/core/models.py
+msgid "Add user to group"
+msgstr ""
+
+#: authentik/core/models.py
+msgid "Remove user from group"
 msgstr ""
 
 #: authentik/core/models.py
@@ -221,6 +238,16 @@ msgid ""
 msgstr ""
 
 #: authentik/core/models.py
+msgid ""
+"Link to a group with identical name. Can have security implications when a "
+"group name is used with another source."
+msgstr ""
+
+#: authentik/core/models.py
+msgid "Use the group name, but deny enrollment when the name already exists."
+msgstr ""
+
+#: authentik/core/models.py
 msgid "Source's display Name."
 msgstr ""
 
@@ -240,6 +267,12 @@ msgstr ""
 msgid ""
 "How the source determines if an existing user should be authenticated or a "
 "new user enrolled."
+msgstr ""
+
+#: authentik/core/models.py
+msgid ""
+"How the source determines if an existing group should be used or a new group "
+"created."
 msgstr ""
 
 #: authentik/core/models.py
@@ -341,6 +374,7 @@ msgid "Go home"
 msgstr ""
 
 #: authentik/core/templates/login/base_full.html
+#: authentik/flows/templates/if/flow-sfe.html
 msgid "Powered by authentik"
 msgstr ""
 
@@ -351,8 +385,20 @@ msgstr ""
 msgid "You're about to sign into %(application)s."
 msgstr ""
 
+#: authentik/core/views/interface.py
+msgid "Interface can only be accessed by internal users."
+msgstr ""
+
 #: authentik/crypto/api.py
 msgid "Subject-alt name"
+msgstr ""
+
+#: authentik/crypto/builder.py
+msgid "rsa"
+msgstr ""
+
+#: authentik/crypto/builder.py
+msgid "ecdsa"
 msgstr ""
 
 #: authentik/crypto/models.py
@@ -401,6 +447,72 @@ msgstr ""
 msgid "Feature only accessible for internal users."
 msgstr ""
 
+#: authentik/enterprise/providers/google_workspace/models.py
+msgid "Google Workspace Provider User"
+msgstr ""
+
+#: authentik/enterprise/providers/google_workspace/models.py
+msgid "Google Workspace Provider Users"
+msgstr ""
+
+#: authentik/enterprise/providers/google_workspace/models.py
+msgid "Google Workspace Provider Group"
+msgstr ""
+
+#: authentik/enterprise/providers/google_workspace/models.py
+msgid "Google Workspace Provider Groups"
+msgstr ""
+
+#: authentik/enterprise/providers/google_workspace/models.py
+#: authentik/enterprise/providers/microsoft_entra/models.py
+#: authentik/providers/scim/models.py
+msgid "Property mappings used for group creation/updating."
+msgstr ""
+
+#: authentik/enterprise/providers/google_workspace/models.py
+msgid "Google Workspace Provider"
+msgstr ""
+
+#: authentik/enterprise/providers/google_workspace/models.py
+msgid "Google Workspace Providers"
+msgstr ""
+
+#: authentik/enterprise/providers/google_workspace/models.py
+msgid "Google Workspace Provider Mapping"
+msgstr ""
+
+#: authentik/enterprise/providers/google_workspace/models.py
+msgid "Google Workspace Provider Mappings"
+msgstr ""
+
+#: authentik/enterprise/providers/microsoft_entra/models.py
+msgid "Microsoft Entra Provider User"
+msgstr ""
+
+#: authentik/enterprise/providers/microsoft_entra/models.py
+msgid "Microsoft Entra Provider Group"
+msgstr ""
+
+#: authentik/enterprise/providers/microsoft_entra/models.py
+msgid "Microsoft Entra Provider Groups"
+msgstr ""
+
+#: authentik/enterprise/providers/microsoft_entra/models.py
+msgid "Microsoft Entra Provider"
+msgstr ""
+
+#: authentik/enterprise/providers/microsoft_entra/models.py
+msgid "Microsoft Entra Providers"
+msgstr ""
+
+#: authentik/enterprise/providers/microsoft_entra/models.py
+msgid "Microsoft Entra Provider Mapping"
+msgstr ""
+
+#: authentik/enterprise/providers/microsoft_entra/models.py
+msgid "Microsoft Entra Provider Mappings"
+msgstr ""
+
 #: authentik/enterprise/providers/rac/models.py
 #: authentik/stages/user_login/models.py
 msgid ""
@@ -429,11 +541,11 @@ msgid "RAC Endpoints"
 msgstr ""
 
 #: authentik/enterprise/providers/rac/models.py
-msgid "RAC Property Mapping"
+msgid "RAC Provider Property Mapping"
 msgstr ""
 
 #: authentik/enterprise/providers/rac/models.py
-msgid "RAC Property Mappings"
+msgid "RAC Provider Property Mappings"
 msgstr ""
 
 #: authentik/enterprise/providers/rac/models.py
@@ -450,6 +562,20 @@ msgstr ""
 
 #: authentik/enterprise/providers/rac/views.py
 msgid "(You are already connected in another tab/window)"
+msgstr ""
+
+#: authentik/enterprise/stages/source/models.py
+msgid ""
+"Amount of time a user can take to return from the source to continue the "
+"flow (Format: hours=-1;minutes=-2;seconds=-3)"
+msgstr ""
+
+#: authentik/enterprise/stages/source/models.py
+msgid "Source Stage"
+msgstr ""
+
+#: authentik/enterprise/stages/source/models.py
+msgid "Source Stages"
 msgstr ""
 
 #: authentik/events/api/tasks.py
@@ -730,6 +856,25 @@ msgstr ""
 msgid "Invalid next URL"
 msgstr ""
 
+#: authentik/lib/sync/outgoing/tasks.py
+msgid "Starting full provider sync"
+msgstr ""
+
+#: authentik/lib/sync/outgoing/tasks.py
+#, python-format
+msgid "Syncing page %(page)d of users"
+msgstr ""
+
+#: authentik/lib/sync/outgoing/tasks.py
+#, python-format
+msgid "Syncing page %(page)d of groups"
+msgstr ""
+
+#: authentik/lib/sync/outgoing/tasks.py
+#, python-brace-format
+msgid "Stopping sync due to error: {error}"
+msgstr ""
+
 #: authentik/lib/utils/time.py
 #, python-format
 msgid "%(value)s is not in the correct format of 'hours=3;minutes=1'."
@@ -896,6 +1041,30 @@ msgstr ""
 msgid "Expression Policies"
 msgstr ""
 
+#: authentik/policies/geoip/models.py
+msgid "GeoIP: client IP not found in ASN database."
+msgstr ""
+
+#: authentik/policies/geoip/models.py
+msgid "Client IP is not part of an allowed autonomous system."
+msgstr ""
+
+#: authentik/policies/geoip/models.py
+msgid "GeoIP: client IP address not found in City database."
+msgstr ""
+
+#: authentik/policies/geoip/models.py
+msgid "Client IP is not in an allowed country."
+msgstr ""
+
+#: authentik/policies/geoip/models.py
+msgid "GeoIP Policy"
+msgstr ""
+
+#: authentik/policies/geoip/models.py
+msgid "GeoIP Policies"
+msgstr ""
+
 #: authentik/policies/models.py
 msgid "all, all policies must pass"
 msgstr ""
@@ -1050,12 +1219,6 @@ msgstr ""
 
 #: authentik/providers/ldap/models.py
 msgid ""
-"Users in this group can do search queries. If not set, every user can "
-"execute search queries."
-msgstr ""
-
-#: authentik/providers/ldap/models.py
-msgid ""
 "The start for uidNumbers, this number is added to the user.pk to make sure "
 "that the numbers aren't too low for POSIX users. Default is 2000 to ensure "
 "that we don't collide with local users uidNumber"
@@ -1084,6 +1247,10 @@ msgstr ""
 
 #: authentik/providers/ldap/models.py
 msgid "LDAP Providers"
+msgstr ""
+
+#: authentik/providers/ldap/models.py
+msgid "Search full LDAP directory"
 msgstr ""
 
 #: authentik/providers/oauth2/id_token.py
@@ -1341,10 +1508,6 @@ msgstr ""
 msgid "GitHub Compatibility: Access your Groups"
 msgstr ""
 
-#: authentik/providers/oauth2/views/userinfo.py
-msgid "authentik API Access on behalf of your user"
-msgstr ""
-
 #: authentik/providers/proxy/api.py
 msgid "User and password attributes must be set when basic auth is enabled."
 msgstr ""
@@ -1432,6 +1595,20 @@ msgstr ""
 
 #: authentik/providers/radius/models.py
 msgid "Radius Providers"
+msgstr ""
+
+#: authentik/providers/radius/models.py
+msgid "Radius Provider Property Mapping"
+msgstr ""
+
+#: authentik/providers/radius/models.py
+msgid "Radius Provider Property Mappings"
+msgstr ""
+
+#: authentik/providers/saml/api/providers.py
+msgid ""
+"With a signing keypair selected, at least one of 'Sign assertion' and 'Sign "
+"Response' must be selected."
 msgstr ""
 
 #: authentik/providers/saml/api/providers.py
@@ -1528,6 +1705,22 @@ msgid "RSA-SHA512"
 msgstr ""
 
 #: authentik/providers/saml/models.py authentik/sources/saml/models.py
+msgid "ECDSA-SHA1"
+msgstr ""
+
+#: authentik/providers/saml/models.py authentik/sources/saml/models.py
+msgid "ECDSA-SHA256"
+msgstr ""
+
+#: authentik/providers/saml/models.py authentik/sources/saml/models.py
+msgid "ECDSA-SHA384"
+msgstr ""
+
+#: authentik/providers/saml/models.py authentik/sources/saml/models.py
+msgid "ECDSA-SHA512"
+msgstr ""
+
+#: authentik/providers/saml/models.py authentik/sources/saml/models.py
 msgid "DSA-SHA1"
 msgstr ""
 
@@ -1549,6 +1742,17 @@ msgstr ""
 msgid "Signing Keypair"
 msgstr ""
 
+#: authentik/providers/saml/models.py authentik/sources/saml/models.py
+msgid ""
+"When selected, incoming assertions are encrypted by the IdP using the public "
+"key of the encryption keypair. The assertion is decrypted by the SP using "
+"the the private key."
+msgstr ""
+
+#: authentik/providers/saml/models.py authentik/sources/saml/models.py
+msgid "Encryption Keypair"
+msgstr ""
+
 #: authentik/providers/saml/models.py
 msgid "Default relay_state value for IDP-initiated logins"
 msgstr ""
@@ -1562,11 +1766,19 @@ msgid "SAML Providers"
 msgstr ""
 
 #: authentik/providers/saml/models.py
-msgid "SAML Property Mapping"
+msgid "SAML Provider Property Mapping"
 msgstr ""
 
 #: authentik/providers/saml/models.py
-msgid "SAML Property Mappings"
+msgid "SAML Provider Property Mappings"
+msgstr ""
+
+#: authentik/providers/saml/models.py
+msgid "SAML Provider from Metadata"
+msgstr ""
+
+#: authentik/providers/saml/models.py
+msgid "SAML Providers from Metadata"
 msgstr ""
 
 #: authentik/providers/scim/models.py
@@ -1575,10 +1787,6 @@ msgstr ""
 
 #: authentik/providers/scim/models.py
 msgid "Authentication token"
-msgstr ""
-
-#: authentik/providers/scim/models.py authentik/sources/ldap/models.py
-msgid "Property mappings used for group creation/updating."
 msgstr ""
 
 #: authentik/providers/scim/models.py
@@ -1590,40 +1798,11 @@ msgid "SCIM Providers"
 msgstr ""
 
 #: authentik/providers/scim/models.py
-msgid "SCIM Mapping"
+msgid "SCIM Provider Mapping"
 msgstr ""
 
 #: authentik/providers/scim/models.py
-msgid "SCIM Mappings"
-msgstr ""
-
-#: authentik/providers/scim/tasks.py
-msgid "Starting full SCIM sync"
-msgstr ""
-
-#: authentik/providers/scim/tasks.py
-#, python-format
-msgid "Syncing page %(page)d of users"
-msgstr ""
-
-#: authentik/providers/scim/tasks.py
-#, python-format
-msgid "Syncing page %(page)d of groups"
-msgstr ""
-
-#: authentik/providers/scim/tasks.py
-#, python-brace-format
-msgid "Failed to sync user {user_name} due to remote error: {error}"
-msgstr ""
-
-#: authentik/providers/scim/tasks.py
-#, python-brace-format
-msgid "Stopping sync due to error: {error}"
-msgstr ""
-
-#: authentik/providers/scim/tasks.py
-#, python-brace-format
-msgid "Failed to sync group {group_name} due to remote error: {error}"
+msgid "SCIM Provider Mappings"
 msgstr ""
 
 #: authentik/rbac/models.py
@@ -1644,14 +1823,6 @@ msgstr ""
 
 #: authentik/rbac/models.py
 msgid "Can view system info"
-msgstr ""
-
-#: authentik/rbac/models.py
-msgid "Can view system tasks"
-msgstr ""
-
-#: authentik/rbac/models.py
-msgid "Can run system tasks"
 msgstr ""
 
 #: authentik/rbac/models.py
@@ -1676,6 +1847,10 @@ msgstr ""
 
 #: authentik/recovery/views.py
 msgid "Used recovery-link to authenticate."
+msgstr ""
+
+#: authentik/sources/ldap/api.py
+msgid "Only a single LDAP Source with password synchronization is allowed"
 msgstr ""
 
 #: authentik/sources/ldap/models.py
@@ -1742,6 +1917,10 @@ msgid "Field which contains a unique Identifier."
 msgstr ""
 
 #: authentik/sources/ldap/models.py
+msgid "Update internal authentik password when login succeeds with LDAP"
+msgstr ""
+
+#: authentik/sources/ldap/models.py
 msgid ""
 "When a user changes their password, sync it back to LDAP. This can only be "
 "enabled on a single LDAP source."
@@ -1756,11 +1935,11 @@ msgid "LDAP Sources"
 msgstr ""
 
 #: authentik/sources/ldap/models.py
-msgid "LDAP Property Mapping"
+msgid "LDAP Source Property Mapping"
 msgstr ""
 
 #: authentik/sources/ldap/models.py
-msgid "LDAP Property Mappings"
+msgid "LDAP Source Property Mappings"
 msgstr ""
 
 #: authentik/sources/ldap/signals.py
@@ -1929,11 +2108,27 @@ msgid "Reddit OAuth Sources"
 msgstr ""
 
 #: authentik/sources/oauth/models.py
+msgid "OAuth Source Property Mapping"
+msgstr ""
+
+#: authentik/sources/oauth/models.py
+msgid "OAuth Source Property Mappings"
+msgstr ""
+
+#: authentik/sources/oauth/models.py
 msgid "User OAuth Source Connection"
 msgstr ""
 
 #: authentik/sources/oauth/models.py
 msgid "User OAuth Source Connections"
+msgstr ""
+
+#: authentik/sources/oauth/models.py
+msgid "Group OAuth Source Connection"
+msgstr ""
+
+#: authentik/sources/oauth/models.py
+msgid "Group OAuth Source Connections"
 msgstr ""
 
 #: authentik/sources/oauth/views/callback.py
@@ -1968,11 +2163,27 @@ msgid "Plex Sources"
 msgstr ""
 
 #: authentik/sources/plex/models.py
+msgid "Plex Source Property Mapping"
+msgstr ""
+
+#: authentik/sources/plex/models.py
+msgid "Plex Source Property Mappings"
+msgstr ""
+
+#: authentik/sources/plex/models.py
 msgid "User Plex Source Connection"
 msgstr ""
 
 #: authentik/sources/plex/models.py
 msgid "User Plex Source Connections"
+msgstr ""
+
+#: authentik/sources/plex/models.py
+msgid "Group Plex Source Connection"
+msgstr ""
+
+#: authentik/sources/plex/models.py
+msgid "Group Plex Source Connections"
 msgstr ""
 
 #: authentik/sources/saml/models.py
@@ -2050,11 +2261,43 @@ msgid "SAML Sources"
 msgstr ""
 
 #: authentik/sources/saml/models.py
+msgid "SAML Source Property Mapping"
+msgstr ""
+
+#: authentik/sources/saml/models.py
+msgid "SAML Source Property Mappings"
+msgstr ""
+
+#: authentik/sources/saml/models.py
 msgid "User SAML Source Connection"
 msgstr ""
 
 #: authentik/sources/saml/models.py
 msgid "User SAML Source Connections"
+msgstr ""
+
+#: authentik/sources/saml/models.py
+msgid "Group SAML Source Connection"
+msgstr ""
+
+#: authentik/sources/saml/models.py
+msgid "Group SAML Source Connections"
+msgstr ""
+
+#: authentik/sources/scim/models.py
+msgid "SCIM Source"
+msgstr ""
+
+#: authentik/sources/scim/models.py
+msgid "SCIM Sources"
+msgstr ""
+
+#: authentik/sources/scim/models.py
+msgid "SCIM Source Property Mapping"
+msgstr ""
+
+#: authentik/sources/scim/models.py
+msgid "SCIM Source Property Mappings"
 msgstr ""
 
 #: authentik/stages/authenticator_duo/models.py
@@ -2163,7 +2406,15 @@ msgid "TOTP Devices"
 msgstr ""
 
 #: authentik/stages/authenticator_validate/challenge.py
-msgid "Invalid Token"
+msgid ""
+"Invalid Token. Please ensure the time on your device is accurate and try "
+"again."
+msgstr ""
+
+#: authentik/stages/authenticator_validate/challenge.py
+#: authentik/stages/authenticator_webauthn/stage.py
+#, python-brace-format
+msgid "Invalid device type. Contact your {brand} administrator for help."
 msgstr ""
 
 #: authentik/stages/authenticator_validate/models.py
@@ -2215,6 +2466,10 @@ msgstr ""
 msgid "Authenticator Validation Stages"
 msgstr ""
 
+#: authentik/stages/authenticator_validate/stage.py
+msgid "No (allowed) MFA authenticator configured."
+msgstr ""
+
 #: authentik/stages/authenticator_webauthn/models.py
 msgid "WebAuthn Authenticator Setup Stage"
 msgstr ""
@@ -2231,6 +2486,14 @@ msgstr ""
 msgid "WebAuthn Devices"
 msgstr ""
 
+#: authentik/stages/authenticator_webauthn/models.py
+msgid "WebAuthn Device type"
+msgstr ""
+
+#: authentik/stages/authenticator_webauthn/models.py
+msgid "WebAuthn Device types"
+msgstr ""
+
 #: authentik/stages/captcha/models.py
 msgid "Public key, acquired your captcha Provider."
 msgstr ""
@@ -2240,11 +2503,36 @@ msgid "Private key, acquired your captcha Provider."
 msgstr ""
 
 #: authentik/stages/captcha/models.py
+msgid ""
+"When enabled and the received captcha score is outside of the given "
+"threshold, the stage will show an error message. When not enabled, the flow "
+"will continue, but the data from the captcha will be available in the "
+"context for policy decisions"
+msgstr ""
+
+#: authentik/stages/captcha/models.py
 msgid "Captcha Stage"
 msgstr ""
 
 #: authentik/stages/captcha/models.py
 msgid "Captcha Stages"
+msgstr ""
+
+#: authentik/stages/captcha/stage.py
+msgid "Unknown error"
+msgstr ""
+
+#: authentik/stages/captcha/stage.py
+#, python-brace-format
+msgid "Failed to validate token: {error}"
+msgstr ""
+
+#: authentik/stages/captcha/stage.py
+msgid "Invalid captcha response"
+msgstr ""
+
+#: authentik/stages/captcha/stage.py
+msgid "Failed to validate token"
 msgstr ""
 
 #: authentik/stages/consent/models.py
@@ -2577,6 +2865,12 @@ msgid ""
 msgstr ""
 
 #: authentik/stages/password/models.py
+msgid ""
+"When enabled, provides a 'show password' button with the password input "
+"field."
+msgstr ""
+
+#: authentik/stages/password/models.py
 msgid "Password Stage"
 msgstr ""
 
@@ -2811,6 +3105,14 @@ msgstr ""
 
 #: authentik/tenants/models.py
 msgid "Globally enable/disable impersonation."
+msgstr ""
+
+#: authentik/tenants/models.py
+msgid "Default token duration"
+msgstr ""
+
+#: authentik/tenants/models.py
+msgid "Default token length"
 msgstr ""
 
 #: authentik/tenants/models.py

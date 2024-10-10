@@ -21,6 +21,7 @@ const docsSidebar = {
             items: [
                 "installation/docker-compose",
                 "installation/kubernetes",
+                "installation/upgrade",
                 "installation/beta",
                 "installation/configuration",
                 "installation/reverse-proxy",
@@ -32,7 +33,7 @@ const docsSidebar = {
         },
         {
             type: "category",
-            label: "Core Concepts",
+            label: "Core Concepts & Tasks",
             collapsed: true,
             items: [
                 "core/terminology",
@@ -40,6 +41,7 @@ const docsSidebar = {
                 "core/certificates",
                 "core/geoip",
                 "core/architecture",
+                "core/settings",
             ],
         },
         {
@@ -86,6 +88,39 @@ const docsSidebar = {
                     ],
                 },
                 "providers/saml/index",
+                {
+                    type: "category",
+                    label: "Google Workspace Provider",
+                    link: {
+                        type: "doc",
+                        id: "providers/gws/index",
+                    },
+                    items: [
+                        "providers/gws/setup-gws",
+                        "providers/gws/add-gws-provider",
+                    ],
+                },
+                {
+                    type: "category",
+                    label: "LDAP Provider",
+                    link: {
+                        type: "doc",
+                        id: "providers/ldap/index",
+                    },
+                    items: ["providers/ldap/generic_setup"],
+                },
+                {
+                    type: "category",
+                    label: "Microsoft Entra ID Provider",
+                    link: {
+                        type: "doc",
+                        id: "providers/entra/index",
+                    },
+                    items: [
+                        "providers/entra/setup-entra",
+                        "providers/entra/add-entra-provider",
+                    ],
+                },
                 "providers/radius/index",
                 {
                     type: "category",
@@ -113,17 +148,79 @@ const docsSidebar = {
                         },
                     ],
                 },
+                "providers/scim/index",
                 {
                     type: "category",
-                    label: "LDAP Provider",
+                    label: "RAC (Remote Access Control) Provider",
                     link: {
                         type: "doc",
-                        id: "providers/ldap/index",
+                        id: "providers/rac/index",
                     },
-                    items: ["providers/ldap/generic_setup"],
+                    items: ["providers/rac/how-to-rac"],
                 },
-                "providers/scim/index",
-                "providers/rac/index",
+                {
+                    type: "category",
+                    label: "Property Mappings",
+                    link: {
+                        type: "doc",
+                        id: "providers/property-mappings/index",
+                    },
+                    items: ["providers/property-mappings/expression"],
+                },
+            ],
+        },
+        {
+            type: "category",
+            label: "Sources",
+            collapsed: true,
+            link: {
+                type: "doc",
+                id: "sources/index",
+            },
+            items: [
+                {
+                    type: "category",
+                    label: "Protocols",
+                    items: [
+                        "sources/ldap/index",
+                        "sources/oauth/index",
+                        "sources/saml/index",
+                        "sources/scim/index",
+                    ],
+                },
+                {
+                    type: "category",
+                    label: "Property Mappings",
+                    link: {
+                        type: "doc",
+                        id: "sources/property-mappings/index",
+                    },
+                    items: ["sources/property-mappings/expressions"],
+                },
+                {
+                    type: "category",
+                    label: "Directory synchronization",
+                    items: [
+                        "sources/active-directory/index",
+                        "sources/freeipa/index",
+                    ],
+                },
+                {
+                    type: "category",
+                    label: "Social Logins",
+                    items: [
+                        "sources/apple/index",
+                        "sources/azure-ad/index",
+                        "sources/discord/index",
+                        "sources/facebook/index",
+                        "sources/github/index",
+                        "sources/google/index",
+                        "sources/mailcow/index",
+                        "sources/twitch/index",
+                        "sources/plex/index",
+                        "sources/twitter/index",
+                    ],
+                },
             ],
         },
         {
@@ -175,6 +272,7 @@ const docsSidebar = {
                     label: "Executors",
                     items: [
                         "flow/executors/if-flow",
+                        "flow/executors/sfe",
                         "flow/executors/user-settings",
                         "flow/executors/headless",
                     ],
@@ -185,10 +283,8 @@ const docsSidebar = {
             type: "category",
             label: "Stages",
             link: {
-                type: "generated-index",
-                title: "Stages",
-                slug: "flow/stages",
-                description: "Overview of all available stages",
+                type: "doc",
+                id: "flow/stages/index",
             },
             items: [
                 "flow/stages/authenticator_duo/index",
@@ -204,6 +300,7 @@ const docsSidebar = {
                 "flow/stages/invitation/index",
                 "flow/stages/password/index",
                 "flow/stages/prompt/index",
+                "flow/stages/source/index",
                 "flow/stages/user_delete",
                 "flow/stages/user_login/index",
                 "flow/stages/user_logout",
@@ -221,25 +318,17 @@ const docsSidebar = {
                 {
                     type: "category",
                     label: "Working with policies",
-                    items: ["policies/working_with_policies/whitelist_email"],
                     link: {
-                        type: "generated-index",
-                        title: "Working with policies",
-                        slug: "policies/working_with_policies",
-                        description: "Overview of policies configuration",
+                        type: "doc",
+                        id: "policies/working_with_policies/working_with_policies",
                     },
+                    items: [
+                        "policies/working_with_policies/whitelist_email",
+                        "policies/working_with_policies/unique_email",
+                    ],
                 },
                 "policies/expression",
             ],
-        },
-        {
-            type: "category",
-            label: "Property Mappings",
-            link: {
-                type: "doc",
-                id: "property-mappings/index",
-            },
-            items: ["property-mappings/expression"],
         },
         {
             type: "category",
@@ -295,7 +384,10 @@ const docsSidebar = {
                         type: "doc",
                         id: "user-group-role/groups/index",
                     },
-                    items: ["user-group-role/groups/manage_groups"],
+                    items: [
+                        "user-group-role/groups/manage_groups",
+                        "user-group-role/groups/group_ref",
+                    ],
                 },
                 {
                     type: "category",
@@ -327,16 +419,19 @@ const docsSidebar = {
                 type: "generated-index",
                 title: "Releases",
                 slug: "releases",
-                description: "Release notes for recent authentik versions",
+                description: "Release Notes for recent authentik versions",
             },
             items: [
-                "releases/2024/v2024.2",
-                "releases/2023/v2023.10",
-                "releases/2023/v2023.8",
+                "releases/2024/v2024.8",
+                "releases/2024/v2024.6",
+                "releases/2024/v2024.4",
                 {
                     type: "category",
                     label: "Previous versions",
                     items: [
+                        "releases/2024/v2024.2",
+                        "releases/2023/v2023.10",
+                        "releases/2023/v2023.8",
                         "releases/2023/v2023.6",
                         "releases/2023/v2023.5",
                         "releases/2023/v2023.4",
@@ -400,7 +495,10 @@ const docsSidebar = {
                 {
                     type: "category",
                     label: "PostgreSQL",
-                    items: ["troubleshooting/postgres/upgrade_kubernetes"],
+                    items: [
+                        "troubleshooting/postgres/upgrade_kubernetes",
+                        "troubleshooting/postgres/upgrade_docker",
+                    ],
                 },
                 "troubleshooting/access",
                 "troubleshooting/login",
@@ -421,7 +519,13 @@ const docsSidebar = {
                 slug: "security",
             },
             items: [
+                "security/security-hardening",
                 "security/policy",
+                "security/CVE-2024-47077",
+                "security/CVE-2024-47070",
+                "security/CVE-2024-42490",
+                "security/CVE-2024-38371",
+                "security/CVE-2024-37905",
                 "security/CVE-2024-23647",
                 "security/CVE-2024-21637",
                 "security/CVE-2023-48228",

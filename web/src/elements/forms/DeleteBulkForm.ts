@@ -1,6 +1,6 @@
 import { EVENT_REFRESH } from "@goauthentik/common/constants";
+import { PFSize } from "@goauthentik/common/enums.js";
 import { MessageLevel } from "@goauthentik/common/messages";
-import { PFSize } from "@goauthentik/elements/Spinner";
 import { ModalButton } from "@goauthentik/elements/buttons/ModalButton";
 import "@goauthentik/elements/buttons/SpinnerButton";
 import { showMessage } from "@goauthentik/elements/messages/MessageContainer";
@@ -134,6 +134,12 @@ export class DeleteBulkForm<T> extends ModalButton {
     @property()
     buttonLabel = msg("Delete");
 
+    /**
+     * Action shown in messages, for example `deleted` or `removed`
+     */
+    @property()
+    action = msg("deleted");
+
     @property({ attribute: false })
     metadata: (item: T) => BulkDeleteMetadata = (item: T) => {
         const rec = item as Record<string, unknown>;
@@ -236,5 +242,12 @@ export class DeleteBulkForm<T> extends ModalButton {
                     ${msg("Cancel")}
                 </ak-spinner-button>
             </footer>`;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-delete-objects-table": DeleteObjectsTable<unknown>;
+        "ak-forms-delete-bulk": DeleteBulkForm<unknown>;
     }
 }

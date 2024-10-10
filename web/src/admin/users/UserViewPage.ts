@@ -1,23 +1,21 @@
 import "@goauthentik/admin/groups/RelatedGroupList";
 import "@goauthentik/admin/providers/rac/ConnectionTokenList";
+import "@goauthentik/admin/rbac/ObjectPermissionsPage";
 import "@goauthentik/admin/users/UserActiveForm";
 import "@goauthentik/admin/users/UserApplicationTable";
 import "@goauthentik/admin/users/UserChart";
 import "@goauthentik/admin/users/UserForm";
-import "@goauthentik/admin/users/UserPasswordForm";
 import {
     renderRecoveryEmailRequest,
     requestRecoveryLink,
-} from "@goauthentik/app/admin/users/UserListPage";
-import { me } from "@goauthentik/app/common/users";
-import { getRelativeTime } from "@goauthentik/app/common/utils";
-import "@goauthentik/app/elements/oauth/UserAccessTokenList";
-import "@goauthentik/app/elements/oauth/UserRefreshTokenList";
-import "@goauthentik/app/elements/rbac/ObjectPermissionsPage";
-import "@goauthentik/app/elements/user/sources/SourceSettings";
+} from "@goauthentik/admin/users/UserListPage";
+import "@goauthentik/admin/users/UserPasswordForm";
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
 import { EVENT_REFRESH } from "@goauthentik/common/constants";
+import { PFSize } from "@goauthentik/common/enums.js";
 import { userTypeToLabel } from "@goauthentik/common/labels";
+import { me } from "@goauthentik/common/users";
+import { getRelativeTime } from "@goauthentik/common/utils";
 import "@goauthentik/components/DescriptionList";
 import {
     type DescriptionPair,
@@ -30,17 +28,21 @@ import { AKElement } from "@goauthentik/elements/Base";
 import "@goauthentik/elements/CodeMirror";
 import { WithCapabilitiesConfig } from "@goauthentik/elements/Interface/capabilitiesProvider";
 import "@goauthentik/elements/PageHeader";
-import { PFSize } from "@goauthentik/elements/Spinner";
 import "@goauthentik/elements/Tabs";
 import "@goauthentik/elements/buttons/ActionButton";
 import "@goauthentik/elements/buttons/SpinnerButton";
 import "@goauthentik/elements/forms/ModalForm";
+import "@goauthentik/elements/oauth/UserAccessTokenList";
+import "@goauthentik/elements/oauth/UserRefreshTokenList";
 import "@goauthentik/elements/user/SessionList";
 import "@goauthentik/elements/user/UserConsentList";
+import "@goauthentik/elements/user/UserReputationList";
+import "@goauthentik/elements/user/sources/SourceSettings";
 
 import { msg, str } from "@lit/localize";
 import { TemplateResult, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 
 import PFBanner from "@patternfly/patternfly/components/Banner/banner.css";
 import PFButton from "@patternfly/patternfly/components/Button/button.css";
@@ -275,6 +277,21 @@ export class UserViewPage extends WithCapabilitiesConfig(AKElement) {
                     </div>
                 </section>
                 <section
+                    slot="page-reputation"
+                    data-tab-title="${msg("Reputation scores")}"
+                    class="pf-c-page__main-section pf-m-no-padding-mobile"
+                >
+                    <div class="pf-c-card">
+                        <div class="pf-c-card__body">
+                            <ak-user-reputation-list
+                                targetUsername=${user.username}
+                                targetEmail=${ifDefined(user.email)}
+                            >
+                            </ak-user-reputation-list>
+                        </div>
+                    </div>
+                </section>
+                <section
                     slot="page-consent"
                     data-tab-title="${msg("Explicit Consent")}"
                     class="pf-c-page__main-section pf-m-no-padding-mobile"
@@ -449,5 +466,11 @@ export class UserViewPage extends WithCapabilitiesConfig(AKElement) {
             >
             </ak-rbac-object-permission-page>
         </ak-tabs>`;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-user-view": UserViewPage;
     }
 }

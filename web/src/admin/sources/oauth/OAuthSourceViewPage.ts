@@ -1,7 +1,7 @@
 import "@goauthentik/admin/policies/BoundPoliciesList";
+import "@goauthentik/admin/rbac/ObjectPermissionsPage";
 import "@goauthentik/admin/sources/oauth/OAuthSourceDiagram";
 import "@goauthentik/admin/sources/oauth/OAuthSourceForm";
-import "@goauthentik/app/elements/rbac/ObjectPermissionsPage";
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
 import { EVENT_REFRESH } from "@goauthentik/common/constants";
 import "@goauthentik/components/events/ObjectChangelog";
@@ -253,5 +253,11 @@ export class OAuthSourceViewPage extends AKElement {
                 objectPk=${this.source.pk}
             ></ak-rbac-object-permission-page>
         </ak-tabs>`;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-source-oauth-view": OAuthSourceViewPage;
     }
 }

@@ -1,6 +1,7 @@
-const fs = require("fs").promises;
 import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
+import { themes as prismThemes } from "prism-react-renderer";
+import type * as OpenApiPlugin from "docusaurus-plugin-openapi-docs";
 
 module.exports = async function (): Promise<Config> {
     const remarkGithub = (await import("remark-github")).default;
@@ -11,10 +12,19 @@ module.exports = async function (): Promise<Config> {
         url: "https://docs.goauthentik.io",
         baseUrl: "/",
         onBrokenLinks: "throw",
+        onBrokenAnchors: "throw",
         favicon: "img/icon.png",
         organizationName: "Authentik Security Inc.",
         projectName: "authentik",
         themeConfig: {
+            announcementBar: {
+                id: "new_docs_structure",
+                content:
+                    'Change is hard, especially when a familiar site gets re-arranged. But we think the new layout is easier to navigate. Take a preview peek at the upcoming new <a target="_blank" rel="noopener noreferrer" href="https://deploy-preview-11522--authentik-docs.netlify.app/docs"> Docs structure!</a>',
+                backgroundColor: "#cc0099",
+                textColor: "#ffffff",
+                isCloseable: false,
+            },
             image: "img/social.png",
             navbar: {
                 logo: {
@@ -81,6 +91,8 @@ module.exports = async function (): Promise<Config> {
                 indexName: "goauthentik",
             },
             prism: {
+                theme: prismThemes.oneLight,
+                darkTheme: prismThemes.oneDark,
                 additionalLanguages: ["python", "diff", "json"],
             },
         },
@@ -90,7 +102,7 @@ module.exports = async function (): Promise<Config> {
                 {
                     docs: {
                         id: "docs",
-                        sidebarPath: require.resolve("./sidebars.js"),
+                        sidebarPath: "./sidebars.js",
                         editUrl:
                             "https://github.com/goauthentik/authentik/edit/main/website/",
                         remarkPlugins: [
@@ -114,17 +126,6 @@ module.exports = async function (): Promise<Config> {
                     },
                 } satisfies Preset.Options,
             ],
-            [
-                "redocusaurus",
-                {
-                    specs: [
-                        {
-                            id: "main",
-                            spec: "static/schema.yaml",
-                        },
-                    ],
-                },
-            ],
         ],
         plugins: [
             [
@@ -133,7 +134,7 @@ module.exports = async function (): Promise<Config> {
                     id: "docsIntegrations",
                     path: "integrations",
                     routeBasePath: "integrations",
-                    sidebarPath: require.resolve("./sidebarsIntegrations.js"),
+                    sidebarPath: "./sidebarsIntegrations.js",
                     editUrl:
                         "https://github.com/goauthentik/authentik/edit/main/website/",
                 },
@@ -144,15 +145,33 @@ module.exports = async function (): Promise<Config> {
                     id: "docsDevelopers",
                     path: "developer-docs",
                     routeBasePath: "developer-docs",
-                    sidebarPath: require.resolve("./sidebarsDev.js"),
+                    sidebarPath: "./sidebarsDev.js",
+                    docItemComponent: "@theme/ApiItem",
                     editUrl:
                         "https://github.com/goauthentik/authentik/edit/main/website/",
+                },
+            ],
+            [
+                "docusaurus-plugin-openapi-docs",
+                {
+                    id: "api",
+                    docsPluginId: "docsDevelopers",
+                    config: {
+                        authentik: {
+                            specPath: "static/schema.yaml",
+                            outputDir: "developer-docs/api/reference/",
+                            hideSendButton: true,
+                            sidebarOptions: {
+                                groupPathsBy: "tag",
+                            },
+                        } satisfies OpenApiPlugin.Options,
+                    },
                 },
             ],
         ],
         markdown: {
             mermaid: true,
         },
-        themes: ["@docusaurus/theme-mermaid"],
+        themes: ["@docusaurus/theme-mermaid", "docusaurus-theme-openapi-docs"],
     };
 };

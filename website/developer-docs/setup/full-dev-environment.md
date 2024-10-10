@@ -6,9 +6,9 @@ title: Full development environment
 
 -   Python 3.12
 -   Poetry, which is used to manage dependencies
--   Go 1.20
--   Node.js 20
--   PostgreSQL (any recent version will do)
+-   Go 1.23 or newer
+-   Node.js 21 or newer
+-   PostgreSQL 14 or newer
 -   Redis (any recent version will do)
 
 ## Services Setup
@@ -24,10 +24,6 @@ If you use locally installed databases, the PostgreSQL credentials given to auth
 
 :::info
 Depending on your platform, some native dependencies might be required. On macOS, run `brew install libxmlsec1 libpq`, and for the CLI tools `brew install postgresql redis node@20`
-:::
-
-:::info
-As long as [this issue](https://github.com/xmlsec/python-xmlsec/issues/252) about `libxmlsec-1.3.0` is open, a workaround is required to install a compatible version of `libxmlsec1` with brew, see [this comment](https://github.com/xmlsec/python-xmlsec/issues/254#issuecomment-1612005910).
 :::
 
 1. Create an isolated Python environment. To create the environment and install dependencies, run the following commands in the same directory as your local authentik git repository:

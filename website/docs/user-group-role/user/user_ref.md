@@ -14,7 +14,7 @@ The User object has the following properties:
 -   `is_active` Boolean field if user is active.
 -   `date_joined` Date user joined/was created.
 -   `password_change_date` Date password was last changed.
--   `path` User's path, see [Path](#path)
+-   `path` User's path, see [Path](#path-authentik-20227)
 -   `attributes` Dynamic attributes, see [Attributes](#attributes)
 -   `group_attributes()` Merged attributes of all groups the user is member of and the user's own attributes.
 -   `ak_groups` This is a queryset of all the user's groups.
@@ -42,11 +42,7 @@ for group in user.ak_groups.all():
     yield group.name
 ```
 
-## Path
-
-:::info
-Requires authentik 2022.7
-:::
+## Path <span class="badge badge--version">authentik 2022.7+</span>
 
 Paths can be used to organize users into folders depending on which source created them or organizational structure. Paths may not start or end with a slash, but they can contain any other character as path segments. The paths are currently purely used for organization, it does not affect their permissions, group memberships, or anything else.
 
@@ -70,6 +66,14 @@ Optional flag, when set to false, Tokens created by the user will not expire.
 
 Only applies when the token creation is triggered by the user with this attribute set. Additionally, the flag does not apply to superusers.
 
+### `goauthentik.io/user/token-maximum-lifetime`:
+
+Optional flag, when set, defines the maximum lifetime of user-created tokens. Defaults to the system setting if not set.
+
+Only applies when `goauthentik.io/user/token-expires` set to true.
+
+Format is string of format `days=10;hours=1;minute=3;seconds=5`.
+
 ### `goauthentik.io/user/debug`:
 
 See [Troubleshooting access problems](../../troubleshooting/access), when set, the user gets a more detailed explanation of access decisions.
@@ -85,11 +89,11 @@ underneath `additionalHeaders`:
 
 #### Example:
 
-```
+```yaml
 additionalHeaders:
-  REMOTE-USER: joe.smith
-  REMOTE-EMAIL: joe@jsmith.com
-  REMOTE-NAME: Joseph
+    REMOTE-USER: joe.smith
+    REMOTE-EMAIL: joe@jsmith.com
+    REMOTE-NAME: Joseph
 ```
 
 These headers will now be passed to the application when the user logs in. Most applications will need to be configured to accept these headers. Some examples of applications that can accept additional headers from an authentik Proxy Provider are [Grafana](https://grafana.com/docs/grafana/latest/auth/auth-proxy/) and [Tandoor Recipes](https://docs.tandoor.dev/features/authentication/).

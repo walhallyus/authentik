@@ -116,6 +116,7 @@ class OAuthSourceSerializer(SourceSerializer):
     class Meta:
         model = OAuthSource
         fields = SourceSerializer.Meta.fields + [
+            "group_matching_mode",
             "provider_type",
             "request_token_url",
             "authorization_url",
@@ -130,7 +131,13 @@ class OAuthSourceSerializer(SourceSerializer):
             "oidc_jwks_url",
             "oidc_jwks",
         ]
-        extra_kwargs = {"consumer_secret": {"write_only": True}}
+        extra_kwargs = {
+            "consumer_secret": {"write_only": True},
+            "request_token_url": {"allow_blank": True},
+            "authorization_url": {"allow_blank": True},
+            "access_token_url": {"allow_blank": True},
+            "profile_url": {"allow_blank": True},
+        }
 
 
 class OAuthSourceFilter(FilterSet):
@@ -152,6 +159,7 @@ class OAuthSourceFilter(FilterSet):
             "enrollment_flow",
             "policy_engine_mode",
             "user_matching_mode",
+            "group_matching_mode",
             "provider_type",
             "request_token_url",
             "authorization_url",

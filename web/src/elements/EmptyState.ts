@@ -1,6 +1,8 @@
+import { PFSize } from "@goauthentik/common/enums.js";
 import { AKElement } from "@goauthentik/elements/Base";
-import { PFSize } from "@goauthentik/elements/Spinner";
+import "@goauthentik/elements/Spinner";
 
+import { msg } from "@lit/localize";
 import { CSSResult, TemplateResult, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
@@ -20,7 +22,7 @@ export class EmptyState extends AKElement {
     fullHeight = false;
 
     @property()
-    header = "";
+    header?: string;
 
     static get styles(): CSSResult[] {
         return [
@@ -48,7 +50,9 @@ export class EmptyState extends AKElement {
                           "fa-question-circle"} pf-c-empty-state__icon"
                           aria-hidden="true"
                       ></i>`}
-                <h1 class="pf-c-title pf-m-lg">${this.header}</h1>
+                <h1 class="pf-c-title pf-m-lg">
+                    ${this.loading && this.header === undefined ? msg("Loading") : this.header}
+                </h1>
                 <div class="pf-c-empty-state__body">
                     <slot name="body"></slot>
                 </div>
@@ -57,5 +61,11 @@ export class EmptyState extends AKElement {
                 </div>
             </div>
         </div>`;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-empty-state": EmptyState;
     }
 }

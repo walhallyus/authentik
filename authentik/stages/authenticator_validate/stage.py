@@ -5,14 +5,17 @@ from hashlib import sha256
 
 from django.conf import settings
 from django.http import HttpRequest, HttpResponse
+from django.utils.timezone import now
+from django.utils.translation import gettext_lazy as _
 from jwt import PyJWTError, decode, encode
 from rest_framework.fields import CharField, IntegerField, ListField, UUIDField
 from rest_framework.serializers import ValidationError
 
 from authentik.core.api.utils import JSONDictField, PassiveSerializer
 from authentik.core.models import User
+from authentik.events.middleware import audit_ignore
 from authentik.events.models import Event, EventAction
-from authentik.flows.challenge import ChallengeResponse, ChallengeTypes, WithUserInfoChallenge
+from authentik.flows.challenge import ChallengeResponse, WithUserInfoChallenge
 from authentik.flows.exceptions import FlowSkipStageException, StageInvalidException
 from authentik.flows.models import FlowDesignation, NotConfiguredAction, Stage
 from authentik.flows.planner import PLAN_CONTEXT_PENDING_USER
@@ -142,6 +145,9 @@ class AuthenticatorValidationChallengeResponse(ChallengeResponse):
         self.stage.executor.plan.context[PLAN_CONTEXT_METHOD_ARGS]["mfa_devices"].append(
             self.device
         )
+        with audit_ignore():
+            self.device.last_used = now()
+            self.device.save()
         return attrs
 
 
@@ -176,15 +182,30 @@ class AuthenticatorValidateStageView(ChallengeStageView):
         threshold = timedelta_from_string(stage.last_auth_threshold)
         allowed_devices = []
 
+        has_webauthn_filters_set = stage.webauthn_allowed_device_types.exists()
+
         for device in user_devices:
             device_class = device.__class__.__name__.lower().replace("device", "")
             if device_class not in stage.device_classes:
                 self.logger.debug("device class not allowed", device_class=device_class)
                 continue
             if isinstance(device, SMSDevice) and device.is_hashed:
-                self.logger.debug("Hashed SMS device, skipping")
+                self.logger.debug("Hashed SMS device, skipping", device=device)
                 continue
             allowed_devices.append(device)
+            # Ignore WebAuthn devices which are not in the allowed types
+            if (
+                isinstance(device, WebAuthnDevice)
+                and device.device_type
+                and has_webauthn_filters_set
+            ):
+                if not stage.webauthn_allowed_device_types.filter(
+                    pk=device.device_type.pk
+                ).exists():
+                    self.logger.debug(
+                        "WebAuthn device type not allowed", device=device, type=device.device_type
+                    )
+                    continue
             # Ensure only one challenge per device class
             # WebAuthn does another device loop to find all WebAuthn devices
             if device_class in seen_classes:
@@ -251,7 +272,7 @@ class AuthenticatorValidateStageView(ChallengeStageView):
                 return self.executor.stage_ok()
             if stage.not_configured_action == NotConfiguredAction.DENY:
                 self.logger.debug("Authenticator not configured, denying")
-                return self.executor.stage_invalid()
+                return self.executor.stage_invalid(_("No (allowed) MFA authenticator configured."))
             if stage.not_configured_action == NotConfiguredAction.CONFIGURE:
                 self.logger.debug("Authenticator not configured, forcing configure")
                 return self.prepare_stages(user)
@@ -309,7 +330,7 @@ class AuthenticatorValidateStageView(ChallengeStageView):
             serializer = SelectableStageSerializer(
                 data={
                     "pk": stage.pk,
-                    "name": stage.friendly_name or stage.name,
+                    "name": getattr(stage, "friendly_name", stage.name),
                     "verbose_name": str(stage._meta.verbose_name)
                     .replace("Setup Stage", "")
                     .strip(),
@@ -321,7 +342,6 @@ class AuthenticatorValidateStageView(ChallengeStageView):
         return AuthenticatorValidationChallenge(
             data={
                 "component": "ak-stage-authenticator-validate",
-                "type": ChallengeTypes.NATIVE.value,
                 "device_challenges": challenges,
                 "configuration_stages": stage_challenges,
             }
@@ -395,8 +415,14 @@ class AuthenticatorValidateStageView(ChallengeStageView):
             webauthn_device: WebAuthnDevice = response.device
             self.logger.debug("Set user from user-less flow", user=webauthn_device.user)
             self.executor.plan.context[PLAN_CONTEXT_PENDING_USER] = webauthn_device.user
+            # We already set a default method in the validator above
+            # so this needs to have higher priority
             self.executor.plan.context[PLAN_CONTEXT_METHOD] = "auth_webauthn_pwl"
-            self.executor.plan.context[PLAN_CONTEXT_METHOD_ARGS] = {
-                "device": webauthn_device,
-            }
+            self.executor.plan.context.setdefault(PLAN_CONTEXT_METHOD_ARGS, {})
+            self.executor.plan.context[PLAN_CONTEXT_METHOD_ARGS].update(
+                {
+                    "device": webauthn_device,
+                    "device_type": webauthn_device.device_type,
+                }
+            )
         return self.set_valid_mfa_cookie(response.device)

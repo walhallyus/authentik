@@ -1,6 +1,9 @@
 ---
-title: Jenkins
+title: Integrate with Jenkins
+sidebar_label: Jenkins
 ---
+
+# Jenkins
 
 <span class="badge badge--secondary">Support level: Community</span>
 
@@ -20,7 +23,7 @@ The following placeholders will be used:
 Create an OAuth2/OpenID provider with the following parameters:
 
 -   **Client Type**: `Confidential`
--   Scopes: OpenID, Email and Profile
+-   **Scopes**: OpenID, Email and Profile
 -   **Signing Key**: Select any available key
 
 Note the Client ID and Client Secret values for the provider.

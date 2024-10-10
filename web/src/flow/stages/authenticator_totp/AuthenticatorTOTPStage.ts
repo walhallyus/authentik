@@ -48,8 +48,7 @@ export class AuthenticatorTOTPStage extends BaseStage<
 
     render(): TemplateResult {
         if (!this.challenge) {
-            return html`<ak-empty-state ?loading="${true}" header=${msg("Loading")}>
-            </ak-empty-state>`;
+            return html`<ak-empty-state loading> </ak-empty-state>`;
         }
         return html`<header class="pf-c-login__main-header">
                 <h1 class="pf-c-title pf-m-3xl">${this.challenge.flowInfo?.title}</h1>
@@ -106,9 +105,14 @@ export class AuthenticatorTOTPStage extends BaseStage<
                             </button>
                         </div>
                     </ak-form-element>
+                    <p>
+                        ${msg(
+                            "Please scan the QR code above using the Microsoft Authenticator, Google Authenticator, or other authenticator apps on your device, and enter the code the device displays below to finish setting up the MFA device.",
+                        )}
+                    </p>
                     <ak-form-element
                         label="${msg("Code")}"
-                        ?required="${true}"
+                        required
                         class="pf-c-form__group"
                         .errors=${(this.challenge?.responseErrors || {})["code"]}
                     >
@@ -136,5 +140,11 @@ export class AuthenticatorTOTPStage extends BaseStage<
             <footer class="pf-c-login__main-footer">
                 <ul class="pf-c-login__main-footer-links"></ul>
             </footer>`;
+    }
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ak-stage-authenticator-totp": AuthenticatorTOTPStage;
     }
 }
